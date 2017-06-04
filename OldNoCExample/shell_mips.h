@@ -14,10 +14,11 @@
 #include "systemc.h"
 #include "shell_mips_if.h"
 
-struct shellmi_mips : public sc_module, public shell_mips_if {
+struct shellmi_mips : public sc_module, public shell_mips_if
+{
 	
-    sc_fifo_in<sc_uint<32>> in;
-    sc_fifo_out<sc_uint<32>> out;
+    sc_fifo_in< sc_uint<32> > in;
+    sc_fifo_out<sc_uint<32> > out;
 	
     void check_destiny(uint32_t word, uint32_t destiny);
 
@@ -49,18 +50,15 @@ struct shellmi_mips : public sc_module, public shell_mips_if {
     /* } */
 
     SC_HAS_PROCESS( shellmi_mips );
-    shellmi_mips (
-        sc_module_name _name,
-        unsigned int identify
-                          ):
-    sc_module(_name), identify(identify) 
+    shellmi_mips (sc_module_name _name, unsigned int identify) :
+        sc_module(_name),
+        _identify(identify)
     {
 
     }
-  private:
-    unsigned int identify;
 
-    
+  private:
+    unsigned int _identify;
 };
 
 #endif

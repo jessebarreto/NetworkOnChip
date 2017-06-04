@@ -7,7 +7,8 @@
 */
 #ifndef noc_common_h
 #define noc_common_h
-#include "systemc.h"
+
+#include <systemc.h>
 
 const int mem_size = 0x00300000;
 const int flit_size = 32;   // bits
