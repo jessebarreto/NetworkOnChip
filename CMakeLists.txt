@@ -23,38 +23,20 @@ set(SYSTEMC_HOME /home/jesseh/libs/systemc-2.3.1a)
 include_directories(SYSTEM "${SYSTEMC_HOME}/include")
 set(SYSTEMC_LIBRARIES ${SYSTEMC_HOME}/lib-linux64/libsystemc.a ${SYSTEMC_HOME}/lib-linux64/libsystemc-2.3.1.so)
 set (CMAKE_CXX_FLAGS "-pthread")
+set (CMAKE_CXX_STANDARD 11)
 
-# Compile a NoCExample
+# Compile the NoCExample
 add_subdirectory(OldNoCExample)
 
 # This Semester NoC
 # Compile Executable
-#add_executable(	NoC #Executable Binary
-#                main.cpp #Source List
-#                cod.cpp
-#                cod.h
-#            	decod.cpp
-#                decod.h
-#                full_router.h
-#                globals.h
-#            	kernel_ni.cpp
-#                kernel_ni.h
-#                master.h
-#                memdef.h
-#                mem_if.h
-#                memoria.cpp
-#                memoria.h
-#                mips.cpp
-#                mips.h
-#                noc_common.h
-#                router.cpp
-#                router.h
-#                shell_master_ni.h
-#                shell_memoria.cpp
-#                shell_mips.cpp
-#                shell_mips.h
-#                shell_mips_if.h
-#                shell_slave_ni.h
-#                slave.h
-#                )
-#target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
+add_executable(	NoC #Executable Binary
+                main.cpp #Source List
+                noc_common.h
+                router.cpp
+                routerchannel.cpp
+                irouterchannel.h
+                networkinterface.cpp
+                inetworkinterfacefrontend.h
+                )
+target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
