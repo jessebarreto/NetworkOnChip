@@ -59,3 +59,4 @@ our NoC:
  * SUDEEP PASRICHA & NIKIL DUTT, On-Chip Communication Architectures - System On Chip Interconnect, Morgan-Kauffmann, 2008, Chap. 12
  * Agarwal, Ankur, Cyril Iskander, and Ravi Shankar. "Survey of network on chip (noc) architectures & contributions." Journal of engineering, Computing and Architecture 3.1 (2009): 21-27.
  * Zeferino, Cesar Albenes, Márcio Eduardo Kreutz, and Altamiro Amadeu Susin. "RASoC: A router soft-core for networks-on-chip." Design, Automation and Test in Europe Conference and Exhibition, 2004. Proceedings. Vol. 3. IEEE, 2004.
+ * Dimitrakopoulos, Giorgos, Psarras, Anastasios, and Ioannis Seitanidis, Microarchitecture of Network-onChip Routers - A Designer's Perspective, Springer, 2015.
