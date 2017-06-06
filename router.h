@@ -40,6 +40,8 @@ public:
     Router(sc_module_name name, unsigned routerId);
 
     std::string getName();
+
+    const int getIdNumber();
 };
 
 #endif // ROUTER_H

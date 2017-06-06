@@ -1,8 +1,7 @@
 #include "routerchannel.h"
 
-RouterChannel::RouterChannel(sc_module_name name, unsigned id) :
-    sc_module(name),
-    _channelId(id)
+RouterChannel::RouterChannel(sc_module_name name) :
+    sc_module(name)
 {
 
 }

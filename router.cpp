@@ -25,3 +25,8 @@ std::__cxx11::string Router::getName()
 {
     return std::string(this->get_parent()->basename());
 }
+
+const int Router::getIdNumber()
+{
+    return _routerId;
+}

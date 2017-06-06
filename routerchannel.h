@@ -12,7 +12,6 @@
 class RouterChannel : public sc_module, public IRouterChannel
 {
     SC_HAS_PROCESS(RouterChannel);
-    const unsigned _channelId;
 
     sc_event _validEvent, _ackEvent;
     flit_t _transmitedFlit;
@@ -23,7 +22,7 @@ public:
      * \param name The module name
      * \param id The unique channel id
      */
-    RouterChannel(sc_module_name name, unsigned id);
+    RouterChannel(sc_module_name name);
 
     void writeValid() override;
     sc_event &readValid() override;
