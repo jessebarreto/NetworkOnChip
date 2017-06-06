@@ -20,9 +20,13 @@ class Router : public sc_module
 
 
     /*!
-     * \brief Main thread for the router.
+     * \brief Thread to read each channel
      */
-    void _run();
+    void _localChannelThread();
+    void _northChannelThread();
+    void _southChannelThread();
+    void _eastChannelThread();
+    void _westChannelThread();
 
 public:
     // Port Connections

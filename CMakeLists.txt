@@ -38,5 +38,6 @@ add_executable(	NoC #Executable Binary
                 irouterchannel.h
                 networkinterface.cpp
                 inetworkinterfacefrontend.h
+                networkinterfacefrontend.h
                 )
 target_link_libraries(NoC ${SYSTEMC_LIBRARIES})

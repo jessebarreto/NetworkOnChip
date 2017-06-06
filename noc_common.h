@@ -15,25 +15,49 @@
 #define NOC_COMMON_H
 
 #include <systemc.h>
+#include <iostream>
 
+#define NOC_COMMON_DEBUG (NoCDebug::Assembly || NoCDebug::Channel)
+
+namespace NoCDebug
+{
+    enum DebugLevel {       // 0x10: most restricted, 0x01: least restricted
+        PE  = 0x10,         // mostra detalhes de processamento dos IP-cores (Processor Elements)
+        NI = 0x08,          // mostra detalhes de processamento das interfaces de redes (NI)
+        Router = 0x04,      // mostra detalhes de processamento dos modulos roteadores
+        Channel = 0x02,     // mostra detalhes de transmissao entre roteadores (canais)
+        Assembly = 0x01     // mostra detalhes da criação da NoC
+    };
+
+    static void printDebug(const std::string &message, DebugLevel type)
+    {
+        if (NOC_COMMON_DEBUG && type) {
+            std::cout << "[DEBUG-Type: " << type << "] - " << message << std::endl;
+        }
+    }
+}
+
+// Project Parameters
 const unsigned MEMORY_SIZE = 0x00300000;
-const unsigned FLIT_SIZE = 32;   // bits
+const unsigned FLIT_SOURCE_SIZE = 8; // bits
+const unsigned FLIT_DESTINATION_SIZE = 8; // bits
+const unsigned FLIT_N_PACKETS_SIZE = 8; // bits
+const unsigned FLIT_ID_SIZE = 8; // bits
+
+const unsigned FLIT_SIZE = FLIT_SOURCE_SIZE + FLIT_DESTINATION_SIZE + FLIT_N_PACKETS_SIZE + FLIT_ID_SIZE;
 const unsigned BUFFER_SIZE = 32; // uint32_l's
-const unsigned DEBUG_LVL = 2;    // 0: most restricted, 3: least restricted
-                                 // 3 - mostra detalhes de transmissao entre roteadores (canais)
-                                 // 2 - mostra detalhes de processamento dos modulos roteadores
-                                 // 1 - mostra detalhes de processamento das interfaces de redes (NI)
-                                 // 0 - mostra detalhes de processamento dos IP-cores
+const unsigned NOC_DEBUG = NoCDebug::Assembly;
 
-
+// Common Types
 typedef sc_uint<FLIT_SIZE> flit_t;
 typedef sc_uint<FLIT_SIZE/2> halfflit_t;
 typedef sc_uint<FLIT_SIZE/4> quarterflit_t;
 
+// NoC Topology Characteristics
 const unsigned NOC_SIZE = 6; // Number of Processor Elements
 const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
 
-// Link
+// Link Type
 enum Link {
     Local = 0,
     North = 1,

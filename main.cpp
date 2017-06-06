@@ -36,22 +36,81 @@
 */
 
 #include <systemc.h>
-#include <iostream>
 
 #include "noc_common.h"
 #include "router.h"
 #include "routerchannel.h"
 #include "networkinterface.h"
 
-static void connectRouters(Router &routerSource, Router &routerDestiny, RouterChannel &channel, bool directionHorizontal)
+static void connectEmptyChannels(Router *router, int routerId, std::vector<RouterChannel *> *channels);
+
+static void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel,
+                           bool directionHorizontal);
+
+int sc_main(int argc, char *argv[])
 {
-    if (directionHorizontal) {
-        routerSource.eastChannel(channel);
-        routerDestiny.westChannel(channel);
-    } else {
-        routerSource.southChannel(channel);
-        routerDestiny.northChannel(channel);
+    // Routers
+    std::vector<Router *> routers;
+    for (unsigned i = 0; i < NOC_SIZE; i++) {
+        std::string routerName("Router_");
+        routerName += std::to_string(i);
+        routers.push_back(new Router(routerName.c_str(), i));
     }
+
+    // Network Interfaces
+    std::vector<NetworkInterface *> networkInterfaces;
+    for (unsigned i = 0; i < NOC_SIZE; i++) {
+        std::string niName("NetworkInterface_");
+        niName += std::to_string(i);
+        networkInterfaces.push_back(new NetworkInterface(niName.c_str(), i));
+    }
+
+    // Processor Elements
+
+
+    // Channels or Links
+    std::vector<RouterChannel *> routerChannels;
+
+    // Assemble NoC Topology
+    NoCDebug::printDebug(std::string("Connect Routers..."), NoCDebug::Assembly);
+    for (unsigned i = 0; i < NOC_SIZE; i++) {
+        for (unsigned j = 1; j <= NOC_ROW_SIZE && i + j < NOC_SIZE; j++) {
+            bool shouldConnect;
+            if (NOC_ROW_SIZE == 1 && (i % NOC_ROW_SIZE == (i + j) % NOC_ROW_SIZE)) {
+                shouldConnect = true;
+            } else {
+                shouldConnect = (j == 1 && !(i % NOC_ROW_SIZE == NOC_ROW_SIZE - 1)) || (j == NOC_ROW_SIZE);
+            }
+
+            if (shouldConnect) {
+                std::string routerChannelName("RouterChannel_");
+                routerChannelName += std::to_string(i) + "_" + std::to_string(i + j);
+                RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
+                connectRouters(*routers.at(i), *routers.at(i + j), *channel, j == 1);
+                routerChannels.push_back(channel);
+                NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(i + j) +
+                                                 " from " + std::string(((j == 1) ? "West" : "North"))),
+                                     NoCDebug::Assembly);
+            }
+        }
+    }
+    NoCDebug::printDebug(std::string("Connect Straw Channels and NIs"), NoCDebug::Assembly);
+    for (int i = 0; i < NOC_SIZE; i++) {
+        Router *router = routers.at(i);
+        NetworkInterface *ni = networkInterfaces.at(i);
+        RouterChannel *channel = new RouterChannel(std::string("RouterChannel_"
+                                                               + std::to_string(i) + "_" + std::to_string(i)).c_str());
+        router->localChannel(*channel);
+        ni->localChannel(*channel);
+
+        connectEmptyChannels(router, i, &routerChannels);
+    }
+
+    // Start Simulation
+    std::cout << "Start NoC Simulation..." << std::endl;
+//    sc_start();
+
+    return 0;
 }
 
 static void connectEmptyChannels(Router *router, int routerId, std::vector<RouterChannel *> *channels)
@@ -92,65 +151,14 @@ static void connectEmptyChannels(Router *router, int routerId, std::vector<Route
     }
 }
 
-int sc_main(int argc, char *argv[])
+static void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel,
+                           bool directionHorizontal)
 {
-    // Routers
-    std::vector<Router *> routers;
-    for (unsigned i = 0; i < NOC_SIZE; i++) {
-        std::string routerName("Router_");
-        routerName += std::to_string(i);
-        routers.push_back(new Router(routerName.c_str(), i));
+    if (directionHorizontal) {
+        routerSource.eastChannel(channel);
+        routerDestination.westChannel(channel);
+    } else {
+        routerSource.southChannel(channel);
+        routerDestination.northChannel(channel);
     }
-
-    // Network Interfaces
-    std::vector<NetworkInterface *> networkInterfaces;
-    for (unsigned i = 0; i < NOC_SIZE; i++) {
-        std::string niName("NetworkInterface_");
-        niName += std::to_string(i);
-        networkInterfaces.push_back(new NetworkInterface(niName.c_str()));
-    }
-
-    // Processor Elements
-
-    // Channels or Links
-    std::vector<RouterChannel *> routerChannels;
-
-    // Assemble NoC Topology
-    std::cout << "Connect Routers..." << std::endl;
-    for (unsigned i = 0; i < NOC_SIZE; i++) {
-        for (unsigned j = 1; j <= NOC_ROW_SIZE && i + j < NOC_SIZE; j++) {
-            bool shouldConnect;
-            if (NOC_ROW_SIZE == 1 && (i % NOC_ROW_SIZE == (i + j) % NOC_ROW_SIZE)) {
-                shouldConnect = true;
-            } else {
-                shouldConnect = (j == 1 && !(i % NOC_ROW_SIZE == NOC_ROW_SIZE - 1)) || (j == NOC_ROW_SIZE);
-            }
-
-            if (shouldConnect) {
-                std::string routerChannelName("RouterChannel_");
-                routerChannelName += std::to_string(i) + "_" + std::to_string(i + j);
-                RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
-                connectRouters(*routers.at(i), *routers.at(i + j), *channel, j == 1);
-                routerChannels.push_back(channel);
-                std::cout << "Connect R" << i << " to R" << i + j << " from " << (j == 1 ? "West" : "North") << std::endl;
-            }
-        }
-    }
-    std::cout << "Connect Straw Channels and NIs" << std::endl;
-    for (int i = 0; i < NOC_SIZE; i++) {
-        Router *router = routers.at(i);
-        NetworkInterface *ni = networkInterfaces.at(i);
-        RouterChannel *channel = new RouterChannel(std::string("RouterChannel_"
-                                                               + std::to_string(i) + "_" + std::to_string(i)).c_str());
-        router->localChannel(*channel);
-        ni->localChannel(*channel);
-
-        connectEmptyChannels(router, i, &routerChannels);
-    }
-
-    // Start Simulation
-    std::cout << "Start NoC Simulation..." << std::endl;
-//    sc_start();
-
-    return 0;
 }
