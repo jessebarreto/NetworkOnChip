@@ -72,6 +72,7 @@ int sc_main(int argc, char *argv[])
     std::vector<RouterChannel *> routerChannels;
 
     // Assemble NoC Topology
+    // TODO: GitHub #8
     NoCDebug::printDebug(std::string("Connect Routers..."), NoCDebug::Assembly);
     for (unsigned i = 0; i < NOC_SIZE; i++) {
         for (unsigned j = 1; j <= NOC_ROW_SIZE && i + j < NOC_SIZE; j++) {

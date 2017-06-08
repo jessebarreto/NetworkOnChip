@@ -54,7 +54,7 @@ typedef sc_uint<FLIT_SIZE/2> halfflit_t;
 typedef sc_uint<FLIT_SIZE/4> quarterflit_t;
 
 // NoC Topology Characteristics
-const unsigned NOC_SIZE = 6; // Number of Processor Elements
+const unsigned NOC_SIZE = 4; // Number of Processor Elements
 const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
 
 // Link Type
