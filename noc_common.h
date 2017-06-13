@@ -17,6 +17,8 @@
 #include <systemc.h>
 #include <iostream>
 
+#include "flit.h"
+
 #define NOC_COMMON_DEBUG (NoCDebug::Assembly || NoCDebug::Channel)
 
 namespace NoCDebug
@@ -47,14 +49,9 @@ const unsigned FLIT_SIZE = FLIT_SOURCE_SIZE + FLIT_DESTINATION_SIZE + FLIT_N_PAC
 const unsigned BUFFER_SIZE = 32; // uint32_l's
 const unsigned NOC_DEBUG = NoCDebug::Assembly;
 
-// Common Types
-typedef sc_uint<FLIT_SIZE> flit_t;
-typedef sc_uint<FLIT_SIZE/2> halfflit_t;
-typedef sc_uint<FLIT_SIZE/4> quarterflit_t;
-
 // NoC Topology Characteristics
-const unsigned NOC_SIZE = 4; // Number of Processor Elements
-const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
+const unsigned NOC_SIZE = 6; // Number of Processor Elements
+const unsigned NOC_ROW_SIZE = 3; // Number of PE per row
 
 // Link Type
 enum Link {
@@ -64,5 +61,10 @@ enum Link {
     East = 3,
     West = 4
 };
+
+// Processor Elements Placing
+
+//typedef std::vector<std::tuple<unsigned, unsigned, unsigned> > map_t;
+
 
 #endif // NOC_COMMON_H

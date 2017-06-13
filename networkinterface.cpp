@@ -11,3 +11,20 @@ void NetworkInterface::connectFrontEnd(INetworkInterfaceFrontEnd *networkInterfa
 {
     _frontEnd = networkInterfaceFrontEnd;
 }
+
+void NetworkInterface::_threadReadShell()
+{
+    for (;;) {
+//        WAIT(Ready from shell);
+        if (_frontEnd->getFrontEndReady()) {
+            _frontEnd->getMessage();
+            _frontEnd->sendDestiny();
+        }
+    }
+}
+
+void NetworkInterface::_threadWriteShell()
+{
+
+}
+

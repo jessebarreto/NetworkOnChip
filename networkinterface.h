@@ -15,6 +15,10 @@ class NetworkInterface : public sc_module
 
     INetworkInterfaceFrontEnd* _frontEnd;
 
+    void _threadReadShell();
+
+    void _threadWriteShell();
+
 public:
     // IO
     sc_port<RouterChannel> localChannel;    
