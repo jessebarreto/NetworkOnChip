@@ -24,9 +24,15 @@ The Header flit will divided as:
 
 \------------------------------------------------------------------------------------------
 
-\| source ID (8 bits) | destiny ID (8 bits) | packet size (8 bits) | flit number (8 bits) |
+\| source ID (8 bits) | destiny ID (8 bits) |                       packet size (16 bits) |
 
 \------------------------------------------------------------------------------------------
+
+The subsequently flits after the header will be responsible to only carry the data.
+
+A packet size can range its size from 2 to 2^16 + 1.
+
+Currently the message only has a single packet. #ISSUE-15
 
 ### Network Interface Architecture
 
