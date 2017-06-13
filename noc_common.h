@@ -38,7 +38,6 @@ namespace NoCDebug
 }
 
 // Project Parameters
-const unsigned MEMORY_SIZE = 0x00300000;
 const unsigned FLIT_SOURCE_SIZE = 8; // bits
 const unsigned FLIT_DESTINATION_SIZE = 8; // bits
 const unsigned FLIT_N_PACKETS_SIZE = 8; // bits
