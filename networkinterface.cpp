@@ -15,11 +15,7 @@ void NetworkInterface::connectFrontEnd(INetworkInterfaceFrontEnd *networkInterfa
 void NetworkInterface::_threadReadShell()
 {
     for (;;) {
-//        WAIT(Ready from shell);
-        if (_frontEnd->getFrontEndReady()) {
-            _frontEnd->getMessage();
-            _frontEnd->sendDestiny();
-        }
+
     }
 }
 

@@ -42,11 +42,27 @@
 #include "routerchannel.h"
 #include "networkinterface.h"
 
+/*!
+ * \brief Connect the empty channels of a router, i.e., channels that were not connected before.
+ * \param router The router that will have its channels connected.
+ * \param routerId  The identity of this router.
+ * \param channels NoC's vector of channels.
+ */
 static void connectEmptyChannels(Router *router, int routerId, std::vector<RouterChannel *> *channels);
 
+/*!
+ * \brief Connect a pair of routers.
+ * \param routerSource The source router.
+ * \param routerDestination The destination router.
+ * \param channel The channel that will be used to connect both routers.
+ * \param directionHorizontal The direction of this connection. (Horizontal = false, Vertical = true)
+ */
 static void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel,
                            bool directionHorizontal);
 
+/*!
+ * \brief Main Function
+ */
 int sc_main(int argc, char *argv[])
 {
     // Routers
@@ -109,7 +125,7 @@ int sc_main(int argc, char *argv[])
 
     // Start Simulation
     std::cout << "Start NoC Simulation..." << std::endl;
-//    sc_start();
+    sc_start();
 
     return 0;
 }

@@ -33,6 +33,7 @@ add_subdirectory(OldNoCExample)
 add_executable(	NoC #Executable Binary
                 main.cpp #Source List
                 noc_common.h
+                flit.cpp
                 router.cpp
                 routerchannel.cpp
                 irouterchannel.h

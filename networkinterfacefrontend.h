@@ -41,56 +41,56 @@ public:
 
 #endif // NETWORKINTERFACEFRONTEND_H
 
-void NetworkInterfaceFrontEnd::_threadRead()
-{
-    while (true) {
-        wait(SC_ZERO_TIME);
-        if (_backEndReadyStatus) {
-//            out.write(); _receivedDestination _receivedMessage
-        }
-    }
-}
+//void NetworkInterfaceFrontEnd::_threadRead()
+//{
+//    while (true) {
+//        wait(SC_ZERO_TIME);
+//        if (_backEndReadyStatus) {
+////            out.write(); _receivedDestination _receivedMessage
+//        }
+//    }
+//}
 
-void NetworkInterfaceFrontEnd::_threadWrite()
-{
-    while (true) {
-        wait(SC_ZERO_TIME);
-        if (processorReady.read()) {
-//            in.write(); _sendDestination _sendMessage
-            _frontEndReadyStatus = true;
-        } else {
-            _frontEndReadyStatus = false;
-        }
-    }
-}
+//void NetworkInterfaceFrontEnd::_threadWrite()
+//{
+//    while (true) {
+//        wait(SC_ZERO_TIME);
+//        if (processorReady.read()) {
+////            in.write(); _sendDestination _sendMessage
+//            _frontEndReadyStatus = true;
+//        } else {
+//            _frontEndReadyStatus = false;
+//        }
+//    }
+//}
 
-std::vector<unsigned> NetworkInterfaceFrontEnd::getMessage()
-{
-    return _sendMessage;
-}
+//std::vector<unsigned> NetworkInterfaceFrontEnd::getMessage()
+//{
+//    return _sendMessage;
+//}
 
 
-void NetworkInterfaceFrontEnd::setMessage(const std::vector<unsigned> &message)
-{
-    _receivedMessage = message;
-}
+//void NetworkInterfaceFrontEnd::setMessage(const std::vector<unsigned> &message)
+//{
+//    _receivedMessage = message;
+//}
 
-unsigned NetworkInterfaceFrontEnd::getDestination()
-{
-    return _sendDestination;
-}
+//unsigned NetworkInterfaceFrontEnd::getDestination()
+//{
+//    return _sendDestination;
+//}
 
-void NetworkInterfaceFrontEnd::setDestination(unsigned destinationId)
-{
-    _receivedDestination = destinationId;
-}
+//void NetworkInterfaceFrontEnd::setDestination(unsigned destinationId)
+//{
+//    _receivedDestination = destinationId;
+//}
 
-bool NetworkInterfaceFrontEnd::getFrontEndReady()
-{
-    return _frontEndReadyStatus;
-}
+//bool NetworkInterfaceFrontEnd::getFrontEndReady()
+//{
+//    return _frontEndReadyStatus;
+//}
 
-void NetworkInterfaceFrontEnd::setBackEndReady(bool backEndReadyStatus)
-{
-    _backEndReadyStatus = backEndReadyStatus;
-}
+//void NetworkInterfaceFrontEnd::setBackEndReady(bool backEndReadyStatus)
+//{
+//    _backEndReadyStatus = backEndReadyStatus;
+//}

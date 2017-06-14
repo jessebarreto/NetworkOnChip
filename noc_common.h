@@ -19,7 +19,7 @@
 
 #include "flit.h"
 
-#define NOC_COMMON_DEBUG (NoCDebug::Assembly || NoCDebug::Channel)
+#define NOC_COMMON_DEBUG (NoCDebug::Assembly | NoCDebug::Channel)
 
 namespace NoCDebug
 {
@@ -33,21 +33,14 @@ namespace NoCDebug
 
     static void printDebug(const std::string &message, DebugLevel type)
     {
-        if (NOC_COMMON_DEBUG && type) {
+        if (NOC_COMMON_DEBUG & type) {
             std::cout << "[DEBUG-Type: " << type << "] - " << message << std::endl;
         }
     }
 }
 
 // Project Parameters
-const unsigned FLIT_SOURCE_SIZE = 8; // bits
-const unsigned FLIT_DESTINATION_SIZE = 8; // bits
-const unsigned FLIT_N_PACKETS_SIZE = 8; // bits
-const unsigned FLIT_ID_SIZE = 8; // bits
-
-const unsigned FLIT_SIZE = FLIT_SOURCE_SIZE + FLIT_DESTINATION_SIZE + FLIT_N_PACKETS_SIZE + FLIT_ID_SIZE;
-const unsigned BUFFER_SIZE = 32; // uint32_l's
-const unsigned NOC_DEBUG = NoCDebug::Assembly;
+const unsigned ROUTER_BUFFER_SIZE = 32; // Number of Flits of a router channel buffer
 
 // NoC Topology Characteristics
 const unsigned NOC_SIZE = 6; // Number of Processor Elements
