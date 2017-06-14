@@ -7,7 +7,7 @@
 #include "routerchannel.h"
 
 /*!
- * \brief The Router class for the NoC.
+ * \brief The Router class is responsible for routing messages from the IP-Cores inside of the NoC.
  */
 class Router : public sc_module
 {
@@ -17,7 +17,6 @@ class Router : public sc_module
      * \brief Unique identifier for this Router.
      */
     const unsigned _routerId;
-
 
     /*!
      * \brief Thread to read each channel
@@ -30,11 +29,11 @@ class Router : public sc_module
 
 public:
     // Port Connections
-    sc_port<RouterChannel> localChannel;
-    sc_port<RouterChannel> northChannel;
-    sc_port<RouterChannel> southChannel;
-    sc_port<RouterChannel> westChannel;
-    sc_port<RouterChannel> eastChannel;
+    sc_port<IRouterChannel> localChannel;
+    sc_port<IRouterChannel> northChannel;
+    sc_port<IRouterChannel> southChannel;
+    sc_port<IRouterChannel> westChannel;
+    sc_port<IRouterChannel> eastChannel;
 
     /*!
      * \brief Router Constructor

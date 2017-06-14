@@ -31,10 +31,20 @@ namespace NoCDebug
         Assembly = 0x01     // mostra detalhes da criação da NoC
     };
 
-    static void printDebug(const std::string &message, DebugLevel type)
+    /*!
+     * \brief This function is responsible to print debug information to the NoC log.
+     * \param message
+     * \param type
+     * \param isError
+     */
+    static void printDebug(const std::string &message, DebugLevel type, bool isError = false)
     {
         if (NOC_COMMON_DEBUG & type) {
-            std::cout << "[DEBUG-Type: " << type << "] - " << message << std::endl;
+            std::cout << "[DEBUG-Type: " << type << "]";
+            if (isError) {
+                std::cout << "[ERROR]";
+            }
+            std::cout << " - " << message << std::endl;
         }
     }
 }

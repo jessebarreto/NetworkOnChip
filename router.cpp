@@ -2,37 +2,107 @@
 
 void Router::_localChannelThread()
 {
-    wait(localChannel->readValid());
-    // Run
-    localChannel->writeAcknowledge();
+    Flit *dataFlit;
+    for (;;) {
+        // Receives Flit from the Local Channel
+        localChannel->validReceiver();
+        localChannel->receiveFlit(dataFlit);
+        wait(*localChannel->acknowledgeReceiver());
+
+        // RUN
+        // VIRTUAL CHANNEL ALLOCATION USING HEADER FLIT
+        // ARBITER DECIDES WHICH FLIT GOES TO NEXT ROUTER
+        // ROUTING FLIT TO NEXT ROUTER
+
+        // Sends Flit to the Local Channel
+        localChannel->validSender();
+        localChannel->sendFlit(dataFlit);
+        wait(*localChannel->acknowledgeSender());
+    }
 }
 
 void Router::_northChannelThread()
 {
-    wait(northChannel->readValid());
-    // Run
-    northChannel->writeAcknowledge();
+    Flit *dataFlit;
+    for (;;) {
+        // Receives Flit from the North Channel
+        northChannel->validReceiver();
+        northChannel->receiveFlit(dataFlit);
+        wait(*northChannel->acknowledgeReceiver());
+
+        // RUN
+        // VIRTUAL CHANNEL ALLOCATION USING HEADER FLIT
+        // ARBITER DECIDES WHICH FLIT GOES TO NEXT ROUTER
+        // ROUTING FLIT TO NEXT ROUTER
+
+        // Sends Flit to the Local Channel
+        northChannel->validSender();
+        northChannel->sendFlit(dataFlit);
+        wait(*northChannel->acknowledgeSender());
+    }
 }
 
 void Router::_southChannelThread()
 {
-    wait(southChannel->readValid());
-    // Run
-    southChannel->writeAcknowledge();
+    Flit *dataFlit;
+    for (;;) {
+        // Receives Flit from the South Channel
+        southChannel->validReceiver();
+        southChannel->receiveFlit(dataFlit);
+        wait(*southChannel->acknowledgeReceiver());
+
+        // RUN
+        // VIRTUAL CHANNEL ALLOCATION USING HEADER FLIT
+        // ARBITER DECIDES WHICH FLIT GOES TO NEXT ROUTER
+        // ROUTING FLIT TO NEXT ROUTER
+
+        // Sends Flit to the Local Channel
+        southChannel->validSender();
+        southChannel->sendFlit(dataFlit);
+        wait(*southChannel->acknowledgeSender());
+    }
 }
 
 void Router::_eastChannelThread()
 {
-    wait(eastChannel->readValid());
-    // Run
-    eastChannel->writeAcknowledge();
+    Flit *dataFlit;
+    for (;;) {
+        // Receives Flit from the East Channel
+        eastChannel->validReceiver();
+        eastChannel->receiveFlit(dataFlit);
+        wait(*eastChannel->acknowledgeReceiver());
+
+        // RUN
+        // VIRTUAL CHANNEL ALLOCATION USING HEADER FLIT
+        // ARBITER DECIDES WHICH FLIT GOES TO NEXT ROUTER
+        // ROUTING FLIT TO NEXT ROUTER
+
+        // Sends Flit to the Local Channel
+        eastChannel->validSender();
+        eastChannel->sendFlit(dataFlit);
+        wait(*eastChannel->acknowledgeSender());
+    }
 }
 
 void Router::_westChannelThread()
 {
-    wait(westChannel->readValid());
-    // Run
-    westChannel->writeAcknowledge();
+    Flit *dataFlit;
+    for (;;) {
+        // Receives Flit from the West Channel
+        westChannel->validReceiver();
+        westChannel->receiveFlit(dataFlit);
+        wait(*westChannel->acknowledgeReceiver());
+
+        // RUN
+        // VIRTUAL CHANNEL ALLOCATION USING HEADER FLIT
+        // ARBITER DECIDES WHICH FLIT GOES TO NEXT ROUTER
+        // ROUTING FLIT TO NEXT ROUTER
+
+        // Sends Flit to the Local Channel
+        westChannel->validSender();
+        westChannel->sendFlit(dataFlit);
+        wait(*westChannel->acknowledgeSender());
+    }
 }
 
 Router::Router(sc_module_name name, unsigned routerId) :
@@ -46,7 +116,7 @@ Router::Router(sc_module_name name, unsigned routerId) :
     SC_THREAD(_westChannelThread);
 }
 
-std::__cxx11::string Router::getName()
+std::string Router::getName()
 {
     return std::string(this->get_parent()->basename());
 }

@@ -7,44 +7,45 @@
 
 /*!
  * \brief The IRouterChannel class is an interface for the \c RouterChannel.
- * This interface is responsible for send/receive data between the routers and synchronize them.
+ * This interface is responsible for send/receive Flits between the routers and synchronize them using
+ * a simple handshaking protocol.
  */
-class IRouterChannel : public virtual sc_interface
+class IRouterChannel : public sc_interface
 {
 public:
     /*!
-     * \brief Write a valid event when the flit being sent is valid.
+     * \brief Writes a flit to the channel.
+     * \param flit A reference to the \c Flit that will be written to the channel.
      */
-    virtual void writeValid() = 0;
+    virtual void sendFlit(Flit *flit) = 0;
 
     /*!
-     * \brief Read a valid event for a router wait.
-     * \return the valid event.
+     * \brief Reads a flit from the channel.
+     * \param flit A reference to the \c Flit that will be read from the channel.
      */
-    virtual sc_event &readValid() = 0;
+    virtual void receiveFlit(Flit *flit) = 0;
 
     /*!
-     * \brief Write an acknowledge event to inform a router that the sent flit arrived with success.
+     * \brief This method should be called by the sender when it's ready to send data.
      */
-    virtual void writeAcknowledge() = 0;
+    virtual void validSender() = 0;
 
     /*!
-     * \brief Read an acknowledge event.
-     * \return the acknowledge event.
+     * \brief This method should be called by the receiver when it's ready to receive data.
      */
-    virtual sc_event &readAcknowledge() = 0;
+    virtual void validReceiver() = 0;
 
     /*!
-     * \brief Write a flit.
-     * \param flit The flit to be sent.
+     * \brief This method returns a reference of the acknowledge event from the channel to the sender.
+     * \return A reference to the acknowledge event to the sender.
      */
-    virtual void writeFlit(flit_t &flit) = 0;
+    virtual sc_event *acknowledgeSender() = 0;
 
     /*!
-     * \brief Read a flit.
-     * \return The flit being read.
+     * \brief This method returns a reference of the acknowledge event from the channel to the receiver.
+     * \return A reference to the acknowledge event to the receiver.
      */
-    virtual flit_t &readFlit() = 0;
+    virtual sc_event *acknowledgeReceiver() = 0;
 };
 
 #endif // IROUTERCHANNEL_H

@@ -1,37 +1,65 @@
 #include "routerchannel.h"
 
-RouterChannel::RouterChannel(sc_module_name name) :
-    sc_module(name)
-{
+unsigned RouterChannel::_channelCounter = 0;
 
+RouterChannel::RouterChannel(const std::string &name) :
+    _channelName(name),
+    _channelId(_channelCounter),
+    _transmittedFlit(NULL)
+{
+    // Counts the number of channels
+    _channelCounter++;
 }
 
-void RouterChannel::writeValid()
+const std::string &RouterChannel::getName()
 {
-    _validEvent.notify();
+    return _channelName;
 }
 
-sc_event &RouterChannel::readValid()
+unsigned RouterChannel::getChannelId()
 {
-    return _validEvent;
+    return _channelId;
 }
 
-void RouterChannel::writeAcknowledge()
+void RouterChannel::sendFlit(Flit *flit)
 {
-    _ackEvent.notify();
+    wait(_writeValid);
+    NoCDebug::printDebug(std::string("Sending Flit to Channel: ") + _channelName
+                         + std::string(" Id: ") + std::to_string(_channelId), NoCDebug::Channel);
+    _transmittedFlit = flit;
+    _writeAcknowledged.notify();
 }
 
-sc_event &RouterChannel::readAcknowledge()
+void RouterChannel::validSender()
 {
-    return _ackEvent;
+    _writeValid.notify();
 }
 
-void RouterChannel::writeFlit(flit_t &flit)
+void RouterChannel::validReceiver()
 {
-    _transmitedFlit = flit;
+    _readValid.notify();
 }
 
-flit_t &RouterChannel::readFlit()
+sc_event *RouterChannel::acknowledgeSender()
 {
-    return _transmitedFlit;
+    return &_writeAcknowledged;
+}
+
+sc_event *RouterChannel::acknowledgeReceiver()
+{
+    return &_readAcknowledged;
+}
+
+void RouterChannel::receiveFlit(Flit *flit)
+{
+    wait(_readValid);
+    NoCDebug::printDebug(std::string("Receiving Flit from Channel: ") + _channelName
+                         + std::string(" Id: ") + std::to_string(_channelId), NoCDebug::Channel);
+    if (_transmittedFlit == NULL) {
+        NoCDebug::printDebug(std::string("Flit transmitted reference is NULL."), NoCDebug::Channel, true);
+        exit(1);
+    }
+    flit = _transmittedFlit;
+    _readAcknowledged.notify();
+    _transmittedFlit = NULL;
 }
