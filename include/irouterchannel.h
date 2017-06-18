@@ -3,7 +3,9 @@
 
 #include <systemc.h>
 
-#include "noc_common.h"
+#include "noccommon.h"
+
+class Flit;
 
 /*!
  * \brief The IRouterChannel class is an interface for the \c RouterChannel.

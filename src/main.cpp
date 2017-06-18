@@ -1,6 +1,6 @@
 /*
  * Universidade de Brasília - UnB
- *
+ * Departamento de Ciências da Computação
  * Project - Network on Chip using SystemC
  * File: main.cpp
  *
@@ -9,7 +9,7 @@
  * Modified by José Adalberto F. Gualeve on 05/05/16
  * Modified by Felipe Cabral e Eduardo Mesquita on 05/07/16.
  * Modified by Jessé Barreto de Barros on 05/06/2017
- * Copyright 2015,2016 - All rights reserved
+ * Copyright 2015, 2016, 2017 - All rights reserved
  */
 
 
@@ -35,12 +35,19 @@
 
 */
 
-#include <systemc.h>
+//#include <systemc.h>
 
-#include "noc_common.h"
+#include "noccommon.h"
 #include "router.h"
 #include "routerchannel.h"
 #include "networkinterface.h"
+
+#if NOC_CONNECTION_TEST
+#include "petestreceiver.h"
+#include "petestreceiverfrontend.h"
+#include "petestsender.h"
+#include "petestsenderfrontend.h"
+#endif //NOC_CONNECTION_TEST
 
 /*!
  * \brief Connect the empty channels of a router, i.e., channels that were not connected before.
@@ -81,8 +88,31 @@ int sc_main(int argc, char *argv[])
         networkInterfaces.push_back(new NetworkInterface(niName.c_str(), i));
     }
 
-    // Processor Elements
+    // Processor Elements Connections
+#if NOC_CONNECTION_TEST
+    PETestSender *testSender = new PETestSender("TestSender");
+    PROCESSORS_MAP[testSender->getName()] = 0;
+    PETestReceiver *testReceiver = new PETestReceiver("TestReceiver");
+    PROCESSORS_MAP[testReceiver->getName()] = 1;
 
+    PETestSenderFrontEnd *testSenderShell = new PETestSenderFrontEnd("TestSenderFrontEnd");
+    NetworkInterface *ni = networkInterfaces.at(0);
+    ni->connectFrontEnd(testSenderShell);
+
+    PETestReceiverFrontEnd *testReceiverShell = new PETestReceiverFrontEnd("TestReceiverFrontEnd");
+    ni = networkInterfaces.at(1);
+    ni->connectFrontEnd(testReceiverShell);
+
+    sc_fifo<char> *senderFifo = new sc_fifo<char>(5);
+    sc_fifo<char> *receiverFifo = new sc_fifo<char>(5);
+
+    testSender->fifoOutput(*senderFifo);
+    testSenderShell->fifoInput(*senderFifo);
+    testReceiver->fifoInput(*receiverFifo);
+    testReceiverShell->fifoOutput(*receiverFifo);
+#else
+
+#endif //NOC_CONNECTION_TEST
 
     // Channels or Links
     std::vector<RouterChannel *> routerChannels;

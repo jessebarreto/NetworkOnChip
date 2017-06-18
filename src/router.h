@@ -3,7 +3,7 @@
 
 #include <systemc.h>
 
-#include "noc_common.h"
+#include "noccommon.h"
 #include "routerchannel.h"
 
 /*!
@@ -19,7 +19,7 @@ class Router : public sc_module
     const unsigned _routerId;
 
     /*!
-     * \brief Thread to read each channel
+     * \brief Threads to for each channel.
      */
     void _localChannelThread();
     void _northChannelThread();
@@ -28,7 +28,9 @@ class Router : public sc_module
     void _westChannelThread();
 
 public:
-    // Port Connections
+    /*!
+     * \brief Ports connections to communicate with other routers/NI.
+     */
     sc_port<IRouterChannel> localChannel;
     sc_port<IRouterChannel> northChannel;
     sc_port<IRouterChannel> southChannel;
@@ -37,13 +39,21 @@ public:
 
     /*!
      * \brief Router Constructor
-     * \param name the module name.
+     * \param name The router name.
      * \param routerId The unique identifier to this router.
      */
     Router(sc_module_name name, unsigned routerId);
 
+    /*!
+     * \brief Getter to this router name.
+     * \return This router name as std::string.
+     */
     std::string getName();
 
+    /*!
+     * \brief Getter to this router unique identification number.
+     * \return This router unique identification name.
+     */
     const int getIdNumber();
 };
 

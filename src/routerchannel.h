@@ -3,7 +3,7 @@
 
 #include <systemc.h>
 
-#include "noc_common.h"
+#include "noccommon.h"
 #include "irouterchannel.h"
 
 /*!
@@ -21,11 +21,6 @@
  */
 class RouterChannel : public sc_channel, public IRouterChannel
 {
-    /*!
-     * \brief The name used to identify this channel
-     */
-    std::string _channelName;
-
     /*!
      * \brief The channel unique identification number in the NoC.
      */
@@ -70,13 +65,13 @@ public:
      * \param name The channel name
      * \param id The unique channel id
      */
-    RouterChannel(const std::string &name);
+    RouterChannel(const sc_module_name &name);
 
     /*!
      * \brief Getter to this channel name.
      * \return The channel name.
      */
-    const std::string &getName();
+    std::string getName();
 
     /*!
      * \brief Getter to this channel unique identification name.
