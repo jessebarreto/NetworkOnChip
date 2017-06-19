@@ -10,7 +10,7 @@ class PETestReceiverFrontEnd : public sc_module, public NetworkInterfaceFrontEnd
     void _threadRun();
 
 public:
-    //IO
+    // IO
     sc_fifo_out<char> fifoOutput;
 
     PETestReceiverFrontEnd(sc_module_name name);
