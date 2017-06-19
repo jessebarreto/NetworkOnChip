@@ -118,29 +118,57 @@ int sc_main(int argc, char *argv[])
     std::vector<RouterChannel *> routerChannels;
 
     // Assemble NoC Topology
-    // TODO: GitHub #8
-    NoCDebug::printDebug(std::string("Connect Routers..."), NoCDebug::Assembly);
-    for (unsigned i = 0; i < NOC_SIZE; i++) {
-        for (unsigned j = 1; j <= NOC_ROW_SIZE && i + j < NOC_SIZE; j++) {
-            bool shouldConnect;
-            if (NOC_ROW_SIZE == 1 && (i % NOC_ROW_SIZE == (i + j) % NOC_ROW_SIZE)) {
-                shouldConnect = true;
-            } else {
-                shouldConnect = (j == 1 && !(i % NOC_ROW_SIZE == NOC_ROW_SIZE - 1)) || (j == NOC_ROW_SIZE);
-            }
+	// Type A - Horizontal Connection
+	// Source Channel: East
+	// Destination Channel: West
+	//
+	// Type B - Vertical Connection
+	// Source Channel: South
+	//  Destination Channel: North
+	//
+	//		   B
+    //	      ||  
+    //	      ||
+    //	A ===(ri)	
+	//
+	// New routers must be connected to their left-side and up-side routers
+	// Should them exist and respecting the topology 
+	for (unsigned i = 1; i < NOC_SIZE; i++) {
+        
+		//Type A
+		//Source Index
+		unsigned sourceA = i - 1;;
+		// 1. Check if the current router is in same row as the previous router
+		if (ceil((sourceA + 1)/NOC_ROW_SIZE) == ceil((i + 1)/NOC_ROW_SIZE)) {
 
-            if (shouldConnect) {
-                std::string routerChannelName("RouterChannel_");
-                routerChannelName += std::to_string(i) + "_" + std::to_string(i + j);
-                RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
-                connectRouters(*routers.at(i), *routers.at(i + j), *channel, j == 1);
-                routerChannels.push_back(channel);
-                NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(i + j) +
-                                                 " from " + std::string(((j == 1) ? "West" : "North"))),
-                                     NoCDebug::Assembly);
-            }
-        }
+			std::string routerChannelName("RouterChannel_");
+            routerChannelName += std::to_string(i) + "_" + std::to_string(sourceA);
+            RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
+            connectRouters(*routers.at(i), *routers.at(sourceA), *channel, false);
+            routerChannels.push_back(channel);
+            NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceA) + " from West"), NoCDebug::Assembly);
+
+		}
+
+		//Type B
+		//Source Index
+		unsigned sourceB = i - NOC_ROW_SIZE;
+		// 1. Check if isn't a topology in row
+		// 2. Check if isn't the first row	
+		if (NOC_SIZE != NOC_ROW_SIZE && i > NOC_ROW_SIZE) {
+
+			std::string routerChannelName("RouterChannel_");
+            routerChannelName += std::to_string(i) + "_" + std::to_string(sourceB);
+            RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
+            connectRouters(*routers.at(i), *routers.at(sourceB), *channel, false);
+            routerChannels.push_back(channel);
+            NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceB) + " from North"), NoCDebug::Assembly);
+			
+		}	
+		
+		
     }
+	
     NoCDebug::printDebug(std::string("Connect Straw Channels and NIs"), NoCDebug::Assembly);
     for (int i = 0; i < NOC_SIZE; i++) {
         Router *router = routers.at(i);
@@ -202,8 +230,8 @@ static void connectRouters(Router &routerSource, Router &routerDestination, Rout
                            bool directionHorizontal)
 {
     if (directionHorizontal) {
-        routerSource.eastChannel(channel);
-        routerDestination.westChannel(channel);
+        routerSource.westChannel(channel);
+        routerDestination.eastChannel(channel);
     } else {
         routerSource.southChannel(channel);
         routerDestination.northChannel(channel);
