@@ -127,9 +127,9 @@ int sc_main(int argc, char *argv[])
 	//  Destination Channel: North
 	//
 	//		   B
-    //	      ||  
-    //	      ||
-    //	A ===(ri)	
+	//	      ||  
+	//	      ||
+	//	A ===(ri)	
 	//
 	// New routers must be connected to their left-side and up-side routers
 	// Should them exist and respecting the topology 
@@ -142,11 +142,11 @@ int sc_main(int argc, char *argv[])
 		if (ceil((sourceA + 1)/NOC_ROW_SIZE) == ceil((i + 1)/NOC_ROW_SIZE)) {
 
 			std::string routerChannelName("RouterChannel_");
-            routerChannelName += std::to_string(i) + "_" + std::to_string(sourceA);
-            RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
-            connectRouters(*routers.at(i), *routers.at(sourceA), *channel, false);
-            routerChannels.push_back(channel);
-            NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceA) + " from West"), NoCDebug::Assembly);
+			routerChannelName += std::to_string(i) + "_" + std::to_string(sourceA);
+			RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
+			connectRouters(*routers.at(i), *routers.at(sourceA), *channel, false);
+			routerChannels.push_back(channel);
+			NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceA) + " from West"), NoCDebug::Assembly);
 
 		}
 
@@ -158,16 +158,15 @@ int sc_main(int argc, char *argv[])
 		if (NOC_SIZE != NOC_ROW_SIZE && i > NOC_ROW_SIZE) {
 
 			std::string routerChannelName("RouterChannel_");
-            routerChannelName += std::to_string(i) + "_" + std::to_string(sourceB);
-            RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
-            connectRouters(*routers.at(i), *routers.at(sourceB), *channel, false);
-            routerChannels.push_back(channel);
-            NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceB) + " from North"), NoCDebug::Assembly);
+			routerChannelName += std::to_string(i) + "_" + std::to_string(sourceB);
+			RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
+			connectRouters(*routers.at(i), *routers.at(sourceB), *channel, false);
+			routerChannels.push_back(channel);
+			NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceB) + " from North"), NoCDebug::Assembly);
 			
 		}	
-		
-		
-    }
+	
+	}
 	
     NoCDebug::printDebug(std::string("Connect Straw Channels and NIs"), NoCDebug::Assembly);
     for (int i = 0; i < NOC_SIZE; i++) {
