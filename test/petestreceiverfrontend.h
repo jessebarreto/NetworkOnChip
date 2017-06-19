@@ -1,6 +1,7 @@
 #ifndef PETESTRECEIVERFRONTEND_H
 #define PETESTRECEIVERFRONTEND_H
 
+#include "noccommon.h"
 #include "networkinterfacefrontendbase.h"
 
 class PETestReceiverFrontEnd : public sc_module, public NetworkInterfaceFrontEndBase
