@@ -1,18 +1,18 @@
 #include "networkinterfacefrontendbase.h"
 
-void NetworkInterfaceFrontEndBase::sendMessage(std::vector<unsigned> *message)
+void NetworkInterfaceFrontEndBase::sendMessage(std::vector<uint32_t> *message)
 {
-    message = &_message;
+    *message = _message;
 }
 
-void NetworkInterfaceFrontEndBase::receiveMessage(std::vector<unsigned> *message)
+void NetworkInterfaceFrontEndBase::receiveMessage(std::vector<uint32_t> *message)
 {
     _message = *message;
 }
 
 void NetworkInterfaceFrontEndBase::sendMessageDestination(unsigned *destinationId)
 {
-    destinationId = &_msgDestination;
+    *destinationId = _msgDestination;
 }
 
 void NetworkInterfaceFrontEndBase::receiveMessageSource(unsigned *sourceId)
@@ -25,7 +25,7 @@ const sc_event &NetworkInterfaceFrontEndBase::sendFrontEndValidEvent()
     return _frontEndValid;
 }
 
-const sc_event &NetworkInterfaceFrontEndBase::sendFrontEndAckEvent()
+const sc_event &NetworkInterfaceFrontEndBase::sendFrontEndAcknowledgeEvent()
 {
 
     return _frontEndAcknowledge;
@@ -48,13 +48,11 @@ void NetworkInterfaceFrontEndBase::frontEndSendEvent()
 
 void NetworkInterfaceFrontEndBase::frontEndReceivedEvent()
 {
-    _message.clear();
     _frontEndAcknowledge.notify();
 }
 
 const sc_event &NetworkInterfaceFrontEndBase::backEndReceivedEvent()
 {
-    _message.clear();
     return _backEndAcknowledge;
 }
 

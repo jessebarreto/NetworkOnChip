@@ -9,6 +9,8 @@ RouterChannel::RouterChannel(const sc_module_name &name) :
 {
     // Counts the number of channels
     _channelCounter++;
+
+    __readValid = 0; __readAck = 0; __writeValid = 0; __writeAck = 0;
 }
 
 std::string RouterChannel::getName()
@@ -24,19 +26,23 @@ unsigned RouterChannel::getChannelId()
 void RouterChannel::sendFlit(Flit *flit)
 {
     wait(_writeValid);
+    __writeValid = false;
     NoCDebug::printDebug(std::string("Sending Flit to Channel: ") + this->name()
                          + std::string("-Id: ") + std::to_string(_channelId), NoCDebug::Channel);
     _transmittedFlit = flit;
+    __writeAck = true;
     _writeAcknowledged.notify();
 }
 
 void RouterChannel::validSender()
 {
+    __writeValid = true;
     _writeValid.notify();
 }
 
 void RouterChannel::validReceiver()
 {
+    __readValid = true;
     _readValid.notify();
 }
 
@@ -61,6 +67,7 @@ void RouterChannel::receiveFlit(Flit *flit)
         exit(1);
     }
     flit = _transmittedFlit;
+    __readAck = true;
     _readAcknowledged.notify();
     _transmittedFlit = NULL;
 }

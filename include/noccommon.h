@@ -92,7 +92,7 @@ const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
 // Flit Parameters
 const unsigned FLIT_SOURCE_SIZE = 8; // bits
 const unsigned FLIT_DESTINATION_SIZE = 8; // bits
-const unsigned FLIT_PACKET_SIZE = 8; // bits
+const unsigned FLIT_PACKET_SIZE = 16; // bits
 const unsigned FLIT_SIZE = FLIT_SOURCE_SIZE + FLIT_DESTINATION_SIZE + FLIT_PACKET_SIZE;
 
 // Common flit data type

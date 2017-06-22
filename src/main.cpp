@@ -103,8 +103,8 @@ int sc_main(int argc, char *argv[])
     ni = networkInterfaces.at(1);
     ni->connectFrontEnd(testReceiverShell);
 
-    sc_fifo<char> *senderFifo = new sc_fifo<char>(5);
-    sc_fifo<char> *receiverFifo = new sc_fifo<char>(5);
+    sc_fifo<char> *senderFifo = new sc_fifo<char>(1);
+    sc_fifo<char> *receiverFifo = new sc_fifo<char>(1);
 
     testSender->fifoOutput(*senderFifo);
     testSenderShell->fifoInput(*senderFifo);

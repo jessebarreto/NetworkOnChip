@@ -14,7 +14,7 @@ void PETestSenderFrontEnd::_threadRun()
     for (;;) {
         fifoInput.read(receivedChar);
         NoCDebug::printDebug(std::string("PE Test Shell Send Char: ") + receivedChar, NoCDebug::NI);
-        _message.push_back(static_cast<unsigned>(receivedChar));
+        _message.push_back(static_cast<uint32_t>(receivedChar));
         frontEndSendEvent();
         wait(backEndReceivedEvent());
     }

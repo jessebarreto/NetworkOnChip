@@ -13,7 +13,7 @@ void PETestReceiverFrontEnd::_threadRun()
         wait(backEndSendEvent());
         sendChar = _message.back();
         _message.pop_back();
-        NoCDebug::printDebug(std::string("PE Test Shell Received Char: ") + sendChar, NoCDebug::NI);
+        NoCDebug::printDebug(std::string("PE Test Shell Received Char: ") + static_cast<char>(sendChar), NoCDebug::NI);
         frontEndReceivedEvent();
     }
 }

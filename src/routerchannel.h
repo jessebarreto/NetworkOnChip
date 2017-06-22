@@ -59,6 +59,8 @@ class RouterChannel : public sc_channel, public IRouterChannel
      * That is the consumer signal to the channel.
      */
     sc_event _readAcknowledged;
+
+    bool __readValid, __readAck, __writeValid, __writeAck;
 public:
     /*!
      * \brief Default Constructor
