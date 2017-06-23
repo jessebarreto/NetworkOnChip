@@ -16,12 +16,12 @@ void PETestReceiver::_threadRun()
     }
 }
 
-const std::__cxx11::string PETestReceiver::getName()
+const std::string PETestReceiver::getName()
 {
     return std::string(this->name());
 }
 
-const std::__cxx11::string &PETestReceiver::getMessage()
+const std::string &PETestReceiver::getMessage()
 {
     return _message;
 }

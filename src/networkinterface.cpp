@@ -19,41 +19,47 @@ void NetworkInterface::_threadRead()
     if (!_frontEnd) {
         std::string message("Front-End Not Connected NI-Id:");
         NoCDebug::printDebug(message + std::to_string(_networkInterfaceId) + " Name: " + name(), NoCDebug::NI, true);
-    }
-    for (;;) {
-        // Receive Message from Front-End
-        wait(_frontEnd->sendFrontEndValidEvent());
-        std::vector<uint32_t> receivedMessage;
-        _frontEnd->sendMessage(&receivedMessage);
-        unsigned destinationId;
-        _frontEnd->sendMessageDestination(&destinationId);
-        _frontEnd->receiveBackEndAcknowledgeEvent();
+    } else {
+        for (;;) {
+            // Receive Message from Front-End
+            wait(_frontEnd->sendFrontEndValidEvent());
+            std::vector<uint32_t> receivedMessage;
+            _frontEnd->sendMessage(&receivedMessage);
+            unsigned destinationId;
+            _frontEnd->sendMessageDestination(&destinationId);
+            _frontEnd->receiveBackEndAcknowledgeEvent();
 
-        // Packet Message
-        _packMessage(destinationId, receivedMessage);
-        receivedMessage.clear();
+            // Packet Message
+            _packMessage(destinationId, receivedMessage);
+            receivedMessage.clear();
 
-        // Send to Router
-        _sendToRouter();
+            // Send to Router
+            _sendToRouter();
+        }
     }
 }
 
 void NetworkInterface::_threadWrite()
 {
-    for (;;) {
-        // Receive from router
-        _receiveFromRouter();
+    if (!_frontEnd) {
+        std::string message("Front-End Not Connected NI-Id:");
+        NoCDebug::printDebug(message + std::to_string(_networkInterfaceId) + " Name: " + name(), NoCDebug::NI, true);
+    } else {
+        for (;;) {
+            // Receive from router
+            _receiveFromRouter();
 
-        // Unpack message
-        unsigned sourceId;
-        std::vector<uint32_t> sendMessage;
-        _unpackMessage(&sourceId, &sendMessage);
+            // Unpack message
+            unsigned sourceId;
+            std::vector<uint32_t> sendMessage;
+            _unpackMessage(&sourceId, &sendMessage);
 
-        // Send Message to front-End
-        _frontEnd->receiveMessage(&sendMessage);
-        _frontEnd->receiveMessageSource(&sourceId);
-        _frontEnd->receiveBackEndValidEvent();
-        wait(_frontEnd->sendFrontEndAcknowledgeEvent());
+            // Send Message to front-End
+            _frontEnd->receiveMessage(&sendMessage);
+            _frontEnd->receiveMessageSource(&sourceId);
+            _frontEnd->receiveBackEndValidEvent();
+            wait(_frontEnd->sendFrontEndAcknowledgeEvent());
+        }
     }
 }
 
@@ -108,9 +114,7 @@ const void NetworkInterface::_unpackMessage(unsigned *sourceId, std::vector<uint
 void NetworkInterface::_sendToRouter()
 {
     for (Flit *flit : _sendPacket) {
-        localChannel->validSender();
         localChannel->sendFlit(flit);
-        wait(*localChannel->acknowledgeSender());
     }
 }
 
@@ -119,17 +123,13 @@ void NetworkInterface::_receiveFromRouter()
     _receivePacket.clear();
     Flit *flit;
     // Receive Header Flit
-    localChannel->validReceiver();
-    localChannel->receiveFlit(flit);
-    wait(*localChannel->acknowledgeReceiver());
+    flit = localChannel->receiveFlit();
     _receivePacket.push_back(flit);
 
     // Receive Tail Flits
     uint16_t packetSize = flit->getData().range(15, 0);
     for (uint16_t flitIndex = 0; flitIndex < packetSize; flitIndex++) {
-        localChannel->validReceiver();
-        localChannel->receiveFlit(flit);
-        wait(*localChannel->acknowledgeReceiver());
+        flit = localChannel->receiveFlit();
         _receivePacket.push_back(flit);
     }
 }

@@ -46,6 +46,7 @@ add_executable(	NoC #Executable Binary
                 test/petestsenderfrontend.cpp
                 test/petestreceiver.cpp
                 test/petestreceiverfrontend.cpp
+                test/channeltester.cpp
                 include/noccommon.h #Include List
                 include/irouterchannel.h
                 include/inetworkinterfacefrontend.h

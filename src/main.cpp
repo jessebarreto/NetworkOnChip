@@ -47,6 +47,7 @@
 #include "petestreceiverfrontend.h"
 #include "petestsender.h"
 #include "petestsenderfrontend.h"
+#include "channeltester.h"
 #endif //NOC_CONNECTION_TEST
 
 /*!
@@ -90,26 +91,33 @@ int sc_main(int argc, char *argv[])
 
     // Processor Elements Connections
 #if NOC_CONNECTION_TEST
-    PETestSender *testSender = new PETestSender("TestSender");
-    PROCESSORS_MAP[testSender->getName()] = 0;
-    PETestReceiver *testReceiver = new PETestReceiver("TestReceiver");
-    PROCESSORS_MAP[testReceiver->getName()] = 1;
+//    PETestSender *testSender = new PETestSender("TestSender");
+//    PROCESSORS_MAP[testSender->getName()] = 0;
+//    PETestReceiver *testReceiver = new PETestReceiver("TestReceiver");
+//    PROCESSORS_MAP[testReceiver->getName()] = 1;
 
-    PETestSenderFrontEnd *testSenderShell = new PETestSenderFrontEnd("TestSenderFrontEnd");
-    NetworkInterface *ni = networkInterfaces.at(0);
-    ni->connectFrontEnd(testSenderShell);
+//    PETestSenderFrontEnd *testSenderShell = new PETestSenderFrontEnd("TestSenderFrontEnd");
+//    NetworkInterface *ni = networkInterfaces.at(0);
+//    ni->connectFrontEnd(testSenderShell);
 
-    PETestReceiverFrontEnd *testReceiverShell = new PETestReceiverFrontEnd("TestReceiverFrontEnd");
-    ni = networkInterfaces.at(1);
-    ni->connectFrontEnd(testReceiverShell);
+//    PETestReceiverFrontEnd *testReceiverShell = new PETestReceiverFrontEnd("TestReceiverFrontEnd");
+//    ni = networkInterfaces.at(1);
+//    ni->connectFrontEnd(testReceiverShell);
 
-    sc_fifo<char> *senderFifo = new sc_fifo<char>(1);
-    sc_fifo<char> *receiverFifo = new sc_fifo<char>(1);
+//    sc_fifo<char> *senderFifo = new sc_fifo<char>(1);
+//    sc_fifo<char> *receiverFifo = new sc_fifo<char>(1);
 
-    testSender->fifoOutput(*senderFifo);
-    testSenderShell->fifoInput(*senderFifo);
-    testReceiver->fifoInput(*receiverFifo);
-    testReceiverShell->fifoOutput(*receiverFifo);
+//    testSender->fifoOutput(*senderFifo);
+//    testSenderShell->fifoInput(*senderFifo);
+//    testReceiver->fifoInput(*receiverFifo);
+//    testReceiverShell->fifoOutput(*receiverFifo);
+
+    ChannelTester channelTester1("ChannelTester1", 0, true);
+    ChannelTester channelTester2("ChannelTester2", 1, false);
+
+    RouterChannel channel("RouterChannelTest1");
+    channelTester1.channel(channel);
+    channelTester2.channel(channel);
 #else
 
 #endif //NOC_CONNECTION_TEST
@@ -147,7 +155,6 @@ int sc_main(int argc, char *argv[])
 			connectRouters(*routers.at(i), *routers.at(sourceA), *channel, false);
 			routerChannels.push_back(channel);
 			NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceA) + " from West"), NoCDebug::Assembly);
-
 		}
 
 		//Type B
@@ -156,14 +163,12 @@ int sc_main(int argc, char *argv[])
 		// 1. Check if isn't a topology in row
 		// 2. Check if isn't the first row	
 		if (NOC_SIZE != NOC_ROW_SIZE && i > NOC_ROW_SIZE) {
-
 			std::string routerChannelName("RouterChannel_");
 			routerChannelName += std::to_string(i) + "_" + std::to_string(sourceB);
 			RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
 			connectRouters(*routers.at(i), *routers.at(sourceB), *channel, false);
 			routerChannels.push_back(channel);
-			NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceB) + " from North"), NoCDebug::Assembly);
-			
+			NoCDebug::printDebug(std::string("Connect R" + std::to_string(i) + " to R" + std::to_string(sourceB) + " from North"), NoCDebug::Assembly);		
 		}	
 	
 	}

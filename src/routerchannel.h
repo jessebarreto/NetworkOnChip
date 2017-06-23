@@ -5,6 +5,7 @@
 
 #include "noccommon.h"
 #include "irouterchannel.h"
+#include "flit.h"
 
 /*!
  * \brief The RouterChannel class which is responsible for connecting routers and network interface modules and transmit
@@ -36,31 +37,33 @@ class RouterChannel : public sc_channel, public IRouterChannel
      */
     Flit* _transmittedFlit;
 
-    /*!
-     * \brief The event that indicates that the \c Flit being sent is valid.
-     * That is the producer signal to the channel.
-     */
-    sc_event _writeValid;
+//    /*!
+//     * \brief The event that indicates that the \c Flit being sent is valid.
+//     * That is the producer signal to the channel.
+//     */
+//    sc_event _writeValid;
 
-    /*!
-     * \brief The event that indicates that \c Flit being sent was acknowledge by the channel.
-     * That is the channel signal to the producer.
-     */
-    sc_event _writeAcknowledged;
+//    /*!
+//     * \brief The event that indicates that \c Flit being sent was acknowledge by the channel.
+//     * That is the channel signal to the producer.
+//     */
+//    sc_event _writeAcknowledged;
 
-    /*!
-     * \brief The event that indicates that \c Flit being sent was validated by the channel to be send.
-     * That is the channel signal to the consumer.
-     */
-    sc_event _readValid;
+//    /*!
+//     * \brief The event that indicates that \c Flit being sent was validated by the channel to be send.
+//     * That is the channel signal to the consumer.
+//     */
+//    sc_event _readValid;
 
-    /*!
-     * \brief The event that indicates that \c Flit being sent was received by the receiver.
-     * That is the consumer signal to the channel.
-     */
-    sc_event _readAcknowledged;
+//    /*!
+//     * \brief The event that indicates that \c Flit being sent was received by the receiver.
+//     * That is the consumer signal to the channel.
+//     */
+//    sc_event _readAcknowledged;
 
-    bool __readValid, __readAck, __writeValid, __writeAck;
+//    sc_event _valid, _acknowledge;
+
+    bool _valid, _acknowledge, _idle;
 public:
     /*!
      * \brief Default Constructor
@@ -83,15 +86,12 @@ public:
 
     void sendFlit(Flit *flit) override;
 
-    void receiveFlit(Flit *flit) override;
+    const sc_event *receiveAcknowledge();
 
-    void validSender() override;
+    const sc_event *receiveValid();
 
-    void validReceiver() override;
+    Flit *receiveFlit() override;
 
-    sc_event *acknowledgeSender() override;
-
-    sc_event *acknowledgeReceiver() override;
 };
 
 #endif // ROUTERCHANNEL_H

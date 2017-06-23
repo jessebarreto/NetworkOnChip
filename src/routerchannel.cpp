@@ -5,12 +5,14 @@ unsigned RouterChannel::_channelCounter = 0;
 RouterChannel::RouterChannel(const sc_module_name &name) :
     sc_channel(name),
     _channelId(_channelCounter),
-    _transmittedFlit(NULL)
+    _transmittedFlit(nullptr)
 {
     // Counts the number of channels
     _channelCounter++;
 
-    __readValid = 0; __readAck = 0; __writeValid = 0; __writeAck = 0;
+    _valid = false;
+    _acknowledge = false;
+    _idle = true;
 }
 
 std::string RouterChannel::getName()
@@ -25,49 +27,32 @@ unsigned RouterChannel::getChannelId()
 
 void RouterChannel::sendFlit(Flit *flit)
 {
-    wait(_writeValid);
-    __writeValid = false;
-    NoCDebug::printDebug(std::string("Sending Flit to Channel: ") + this->name()
-                         + std::string("-Id: ") + std::to_string(_channelId), NoCDebug::Channel);
-    _transmittedFlit = flit;
-    __writeAck = true;
-    _writeAcknowledged.notify();
-}
-
-void RouterChannel::validSender()
-{
-    __writeValid = true;
-    _writeValid.notify();
-}
-
-void RouterChannel::validReceiver()
-{
-    __readValid = true;
-    _readValid.notify();
-}
-
-sc_event *RouterChannel::acknowledgeSender()
-{
-    return &_writeAcknowledged;
-}
-
-sc_event *RouterChannel::acknowledgeReceiver()
-{
-    return &_readAcknowledged;
-}
-
-void RouterChannel::receiveFlit(Flit *flit)
-{
-    wait(_readValid);
-    wait(_writeAcknowledged);
-    NoCDebug::printDebug(std::string("Receiving Flit from Channel: ") + this->name()
-                         + std::string("-Id: ") + std::to_string(_channelId), NoCDebug::Channel);
-    if (_transmittedFlit == NULL) {
-        NoCDebug::printDebug(std::string("Flit transmitted reference is NULL."), NoCDebug::Channel, true);
-        exit(1);
+    while(!_idle) {
+        wait(SC_ZERO_TIME);
     }
-    flit = _transmittedFlit;
-    __readAck = true;
-    _readAcknowledged.notify();
-    _transmittedFlit = NULL;
+    _transmittedFlit = nullptr;
+    NoCDebug::printDebug(std::string("Sending Flit: ") + std::to_string(flit->getUniqueId())  +
+                         std::string(" to Channel: ") + this->name() + std::string("-Id: ") + std::to_string(_channelId),
+                         NoCDebug::Channel);
+    _transmittedFlit = flit;
+    _valid = true;
+    _idle = false;
+    while(!_acknowledge) {
+        wait(SC_ZERO_TIME);
+    }
+    _acknowledge = false;
+    _idle = true;
+}
+
+Flit *RouterChannel::receiveFlit()
+{
+    while(!_valid) {
+        wait(SC_ZERO_TIME);
+    }
+    NoCDebug::printDebug(std::string("Receiving Flit: ") + std::to_string(_transmittedFlit->getUniqueId())  +
+                         std::string(" from Channel: ") + this->name()
+                         + std::string("-Id: ") + std::to_string(_channelId), NoCDebug::Channel);
+    _valid = false;
+    _acknowledge = true;
+    return _transmittedFlit;
 }
