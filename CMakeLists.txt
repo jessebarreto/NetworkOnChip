@@ -35,8 +35,39 @@ include_directories("${PROJECT_SOURCE_DIR}/src"
 
 # This Semester NoC
 # Compile Executable
-add_executable(	NoC #Executable Binary
+add_executable( NoC #Executable Binary
                 src/main.cpp #Source List
+                src/flit.cpp
+                src/router.cpp
+                src/routerchannel.cpp
+                src/networkinterface.cpp
+                src/networkinterfacefrontendbase.cpp
+                include/noccommon.h #Include List
+                include/irouterchannel.h
+                include/inetworkinterfacefrontend.h
+                include/nocdebug.h
+                )
+target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
+
+# Compile Executable
+add_executable( NoCRouterChannelTester #Executable Binary
+                test/routerchanneltester.cpp #Source List
+                src/flit.cpp
+                src/router.cpp
+                src/routerchannel.cpp
+                src/networkinterface.cpp
+                src/networkinterfacefrontendbase.cpp
+                test/petestsender.cpp # Test List
+                test/channeltester.cpp
+                include/noccommon.h #Include List
+                include/irouterchannel.h
+                include/inetworkinterfacefrontend.h
+                )
+target_link_libraries(NoCRouterChannelTester ${SYSTEMC_LIBRARIES})
+
+# Compile Executable
+add_executable( NoCNetworkInterfaceTester #Executable Binary
+                test/networkinterfacetester.cpp #Source List
                 src/flit.cpp
                 src/router.cpp
                 src/routerchannel.cpp
@@ -46,9 +77,8 @@ add_executable(	NoC #Executable Binary
                 test/petestsenderfrontend.cpp
                 test/petestreceiver.cpp
                 test/petestreceiverfrontend.cpp
-                test/channeltester.cpp
                 include/noccommon.h #Include List
                 include/irouterchannel.h
                 include/inetworkinterfacefrontend.h
-                )
-target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
+               )
+target_link_libraries(NoCNetworkInterfaceTester ${SYSTEMC_LIBRARIES})

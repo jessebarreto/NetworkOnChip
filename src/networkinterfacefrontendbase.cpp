@@ -1,62 +1,34 @@
 #include "networkinterfacefrontendbase.h"
 
-void NetworkInterfaceFrontEndBase::sendMessage(std::vector<uint32_t> *message)
+
+void NetworkInterfaceFrontEndBase::sendPayload(const std::vector<uint32_t> &payload, int dst)
 {
-    *message = _message;
+    _payloadDst = dst;
+    _payload = payload;
+    _writing.notify(SC_ZERO_TIME);
+    wait(_ack);
 }
 
-void NetworkInterfaceFrontEndBase::receiveMessage(std::vector<uint32_t> *message)
+void NetworkInterfaceFrontEndBase::receivePayload(std::vector<uint32_t> &payload, int *src)
 {
-    _message = *message;
+    _reading.notify(SC_ZERO_TIME);
+    wait(_valid);
+    payload = _payload;
+    *src = _payloadSrc;
 }
 
-void NetworkInterfaceFrontEndBase::sendMessageDestination(unsigned *destinationId)
+void NetworkInterfaceFrontEndBase::kernelReceivePayload(std::vector<uint32_t> &payload, int *dst)
 {
-    *destinationId = _msgDestination;
+    wait(_writing);
+    payload = _payload;
+    *dst = _payloadDst;
+    _ack.notify(SC_ZERO_TIME);
 }
 
-void NetworkInterfaceFrontEndBase::receiveMessageSource(unsigned *sourceId)
+void NetworkInterfaceFrontEndBase::kernelSendPayload(const std::vector<uint32_t> &payload, int *src)
 {
-    _msgSource = *sourceId;
-}
-
-const sc_event &NetworkInterfaceFrontEndBase::sendFrontEndValidEvent()
-{
-    return _frontEndValid;
-}
-
-const sc_event &NetworkInterfaceFrontEndBase::sendFrontEndAcknowledgeEvent()
-{
-
-    return _frontEndAcknowledge;
-}
-
-void NetworkInterfaceFrontEndBase::receiveBackEndValidEvent()
-{
-    _backEndValid.notify();
-}
-
-void NetworkInterfaceFrontEndBase::receiveBackEndAcknowledgeEvent()
-{
-    _backEndAcknowledge.notify();
-}
-
-void NetworkInterfaceFrontEndBase::frontEndSendEvent()
-{
-    _frontEndValid.notify();
-}
-
-void NetworkInterfaceFrontEndBase::frontEndReceivedEvent()
-{
-    _frontEndAcknowledge.notify();
-}
-
-const sc_event &NetworkInterfaceFrontEndBase::backEndReceivedEvent()
-{
-    return _backEndAcknowledge;
-}
-
-const sc_event &NetworkInterfaceFrontEndBase::backEndSendEvent()
-{
-    return _backEndValid;
+    wait(_reading);
+    _valid.notify();
+    _payload = payload;
+    _payloadSrc = *src;
 }

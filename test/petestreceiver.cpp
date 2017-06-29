@@ -1,5 +1,7 @@
 #include "petestreceiver.h"
 
+#include "nocdebug.h"
+
 PETestReceiver::PETestReceiver(sc_module_name name) :
     sc_module(name),
     _message("")

@@ -3,7 +3,7 @@
 
 #include <systemc.h>
 
-#include "noccommon.h"
+#include <vector>
 
 /*!
  * \brief The INetworkInterfaceFrontEnd class is an Interface for a FrontEnd (Shell) module which works as a connection
@@ -19,51 +19,9 @@
 class INetworkInterfaceFrontEnd
 {
 public:
-    /*!
-     * \brief The front-end sends a message to the back-end.
-     * \param message The message to be sent.
-     */
-    virtual void sendMessage(std::vector<uint32_t> *message) = 0;
+    virtual void kernelReceivePayload(std::vector<uint32_t> &payload, int *dst) = 0;
 
-    /*!
-     * \brief The front-end receives a message to the back-end.
-     * \param message The message to be received.
-     */
-    virtual void receiveMessage(std::vector<uint32_t> *message) = 0;
-
-    /*!
-     * \brief The front-end sends the message's destination identification number.
-     * \param destinationId The message's destination.
-     */
-    virtual void sendMessageDestination(unsigned *destinationId) = 0;
-
-    /*!
-     * \brief The front-end receives the message's source identification number.
-     * \param sourceId The message's source identification.
-     */
-    virtual void receiveMessageSource(unsigned *sourceId) = 0;
-
-    /*!
-     * \brief The front-end sends an event to inform that its ready to send a message.
-     * \return The valid event.
-     */
-    virtual const sc_event &sendFrontEndValidEvent() = 0;
-
-    /*!
-     * \brief The front-end sends an event to inform that it has received a message from the back-end.
-     * \return The acknowledge event.
-     */
-    virtual const sc_event &sendFrontEndAcknowledgeEvent() = 0;
-
-    /*!
-     * \brief The front-end receives from the back-end an event informing that its ready to send a message.
-     */
-    virtual void receiveBackEndValidEvent() = 0;
-
-    /*!
-     * \brief The front-end receives from the back-end an event informing that it has received a messsage.
-     */
-    virtual void receiveBackEndAcknowledgeEvent() = 0;
+    virtual void kernelSendPayload(const std::vector<uint32_t> &payload, int *src) = 0;
 };
 
 #endif // INETWORKINTERFACEFRONTEND_H

@@ -3,16 +3,14 @@
 
 #include <systemc.h>
 
-#include "noccommon.h"
-
-class Flit;
+#include "flit.h"
 
 /*!
  * \brief The IRouterChannel class is an interface for the \c RouterChannel.
  * This interface is responsible for send/receive Flits between the routers and synchronize them using
  * a simple handshaking protocol.
  */
-class IRouterChannel : public sc_interface
+class IRouterChannel : virtual public sc_interface
 {
 public:
     /*!

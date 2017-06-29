@@ -3,7 +3,6 @@
 
 #include <systemc.h>
 
-#include "noccommon.h"
 #include "irouterchannel.h"
 #include "flit.h"
 
@@ -20,7 +19,7 @@
  *      5. Receiver calls receiveFlit.
  *      6. (Optional) Receiver waits for acknowledge status from channel - calling acknowledgeReceiver.
  */
-class RouterChannel : public sc_channel, public IRouterChannel
+class RouterChannel : public IRouterChannel, public sc_prim_channel
 {
     /*!
      * \brief The channel unique identification number in the NoC.
@@ -37,33 +36,10 @@ class RouterChannel : public sc_channel, public IRouterChannel
      */
     Flit* _transmittedFlit;
 
-//    /*!
-//     * \brief The event that indicates that the \c Flit being sent is valid.
-//     * That is the producer signal to the channel.
-//     */
-//    sc_event _writeValid;
+    sc_event _valid, _acknowledge, _busy;
 
-//    /*!
-//     * \brief The event that indicates that \c Flit being sent was acknowledge by the channel.
-//     * That is the channel signal to the producer.
-//     */
-//    sc_event _writeAcknowledged;
+    bool _busyFlag;
 
-//    /*!
-//     * \brief The event that indicates that \c Flit being sent was validated by the channel to be send.
-//     * That is the channel signal to the consumer.
-//     */
-//    sc_event _readValid;
-
-//    /*!
-//     * \brief The event that indicates that \c Flit being sent was received by the receiver.
-//     * That is the consumer signal to the channel.
-//     */
-//    sc_event _readAcknowledged;
-
-//    sc_event _valid, _acknowledge;
-
-    bool _valid, _acknowledge, _idle;
 public:
     /*!
      * \brief Default Constructor
@@ -86,12 +62,7 @@ public:
 
     void sendFlit(Flit *flit) override;
 
-    const sc_event *receiveAcknowledge();
-
-    const sc_event *receiveValid();
-
     Flit *receiveFlit() override;
-
 };
 
 #endif // ROUTERCHANNEL_H

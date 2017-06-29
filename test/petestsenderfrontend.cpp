@@ -1,10 +1,10 @@
 #include "petestsenderfrontend.h"
 
+#include "nocdebug.h"
+
 PETestSenderFrontEnd::PETestSenderFrontEnd(sc_module_name name) :
     sc_module(name)
 {
-    _msgDestination = 1;
-
     SC_THREAD(_threadRun);
 }
 
@@ -14,8 +14,8 @@ void PETestSenderFrontEnd::_threadRun()
     for (;;) {
         fifoInput.read(receivedChar);
         NoCDebug::printDebug(std::string("PE Test Shell Send Char: ") + receivedChar, NoCDebug::NI);
-        frontEndSendEvent();
-        _message.push_back(static_cast<uint32_t>(receivedChar));
-        wait(backEndReceivedEvent());
+        std::vector<uint32_t> payload;
+        payload.push_back(static_cast<uint32_t>(receivedChar));
+        sendPayload(payload, 1);
     }
 }

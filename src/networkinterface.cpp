@@ -1,12 +1,14 @@
 #include "networkinterface.h"
 
+#include "nocdebug.h"
+
 NetworkInterface::NetworkInterface(sc_module_name name, unsigned id) :
     sc_module(name),
     _networkInterfaceId(id),
     _frontEnd(nullptr)
 {
-    SC_THREAD(_threadRead);
-    SC_THREAD(_threadWrite);
+    SC_THREAD(_threadReadFromShell);
+    SC_THREAD(_threadWriteToShell);
 }
 
 void NetworkInterface::connectFrontEnd(INetworkInterfaceFrontEnd *networkInterfaceFrontEnd)
@@ -14,7 +16,7 @@ void NetworkInterface::connectFrontEnd(INetworkInterfaceFrontEnd *networkInterfa
     _frontEnd = networkInterfaceFrontEnd;
 }
 
-void NetworkInterface::_threadRead()
+void NetworkInterface::_threadReadFromShell()
 {
     if (!_frontEnd) {
         std::string message("Front-End Not Connected NI-Id:");
@@ -22,12 +24,9 @@ void NetworkInterface::_threadRead()
     } else {
         for (;;) {
             // Receive Message from Front-End
-            wait(_frontEnd->sendFrontEndValidEvent());
             std::vector<uint32_t> receivedMessage;
-            _frontEnd->sendMessage(&receivedMessage);
-            unsigned destinationId;
-            _frontEnd->sendMessageDestination(&destinationId);
-            _frontEnd->receiveBackEndAcknowledgeEvent();
+            int destinationId;
+            _frontEnd->kernelReceivePayload(receivedMessage, &destinationId);
 
             // Packet Message
             _packMessage(destinationId, receivedMessage);
@@ -39,7 +38,7 @@ void NetworkInterface::_threadRead()
     }
 }
 
-void NetworkInterface::_threadWrite()
+void NetworkInterface::_threadWriteToShell()
 {
     if (!_frontEnd) {
         std::string message("Front-End Not Connected NI-Id:");
@@ -50,15 +49,12 @@ void NetworkInterface::_threadWrite()
             _receiveFromRouter();
 
             // Unpack message
-            unsigned sourceId;
+            int sourceId;
             std::vector<uint32_t> sendMessage;
             _unpackMessage(&sourceId, &sendMessage);
 
             // Send Message to front-End
-            _frontEnd->receiveMessage(&sendMessage);
-            _frontEnd->receiveMessageSource(&sourceId);
-            _frontEnd->receiveBackEndValidEvent();
-            wait(_frontEnd->sendFrontEndAcknowledgeEvent());
+            _frontEnd->kernelSendPayload(sendMessage, &sourceId);
         }
     }
 }
@@ -89,7 +85,7 @@ void NetworkInterface::_packMessage(unsigned destinationId, const std::vector<ui
     // the Flit objects.
 }
 
-const void NetworkInterface::_unpackMessage(unsigned *sourceId, std::vector<uint32_t> *message)
+const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t> *message)
 {
     NoCDebug::printDebug("NI-ID:" + std::to_string(_networkInterfaceId) + " unpacketing message.", NoCDebug::NI);
     // Unpack Head Flit

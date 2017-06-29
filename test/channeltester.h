@@ -13,7 +13,7 @@ class ChannelTester : public sc_module
 
     void _runThread();
 
-    bool _begin;
+    bool _send;
 
     Flit *_innerFlit;
 
@@ -24,7 +24,8 @@ public:
     // IO Port
     sc_port<RouterChannel> channel;
 
-    ChannelTester(sc_module_name name, int id, bool begin);
+    // Ctor
+    ChannelTester(sc_module_name name, int id, bool send);
 };
 
 #endif // CHANNELTESTER_H

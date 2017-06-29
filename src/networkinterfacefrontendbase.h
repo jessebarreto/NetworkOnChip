@@ -17,81 +17,32 @@
 class NetworkInterfaceFrontEndBase : public INetworkInterfaceFrontEnd
 {
     /*!
-     * \brief An event to inform that the front-end module is ready to send a message.
-     */
-    sc_event _frontEndValid;
-
-    /*!
-     * \brief An event to inform that the front-end module has received a message.
-     */
-    sc_event _frontEndAcknowledge;
-
-    /*!
-     * \brief An event to inform that the back-end module is ready to send a message.
-     */
-    sc_event _backEndValid;
-    /*!
-     * \brief An event to inform that the back-end module has received a message.
-     */
-    sc_event _backEndAcknowledge;
-protected:
-    /*!
      * \brief A message member which can be used for send/receive messages to/from the back-end module.
      */
-    std::vector<uint32_t> _message;
+    std::vector<uint32_t> _payload;
 
     /*!
      * \brief A member used to hold a identification number when sending messages.
      */
-    unsigned _msgDestination;
+    unsigned _payloadDst;
 
     /*!
      * \brief A member used to hold a identification number when receiving messages.
      */
-    unsigned _msgSource;
+    unsigned _payloadSrc;
 
+    sc_event _ack, _valid;
+
+    sc_event _writing, _reading;
+
+protected:
+    void sendPayload(const std::vector<uint32_t> &payload, int dst);
+
+    void receivePayload(std::vector<uint32_t> &payload, int *src);
 public:
-    void sendMessage(std::vector<uint32_t> *message) override;
+    void kernelReceivePayload(std::vector<uint32_t> &payload, int *dst) override;
 
-    void receiveMessage(std::vector<uint32_t> *message) override;
-
-    void sendMessageDestination(unsigned *destinationId) override;
-
-    void receiveMessageSource(unsigned *sourceId) override;
-
-    const sc_event &sendFrontEndValidEvent() override;
-
-    const sc_event &sendFrontEndAcknowledgeEvent() override;
-
-    void receiveBackEndValidEvent() override;
-
-    void receiveBackEndAcknowledgeEvent() override;
-
-    /*!
-     * \brief This method is used to notify the front-end's valid event.
-     * This event informs that the front-end is ready to send a message.
-     */
-    void frontEndSendEvent();
-
-    /*!
-     * \brief This method is used to notify the front-end's acknowledge event.
-     * This event informs that the front-end has received a message.
-     */
-    void frontEndReceivedEvent();
-
-    /*!
-     * \brief This method is used to wait the back-end's acknowledge event.
-     * This event informs that the back-end has received a message.
-     * \return
-     */
-    const sc_event &backEndReceivedEvent();
-
-    /*!
-     * \brief This method is used to wait the back-end's valid event.
-     * This event informs that the back-end's is ready to send an event.
-     * \return
-     */
-    const sc_event &backEndSendEvent();
+    void kernelSendPayload(const std::vector<uint32_t> &payload, int *src) override;
 };
 
 #endif // NETWORKINTERFACEFRONTENDBASE_H

@@ -1,6 +1,8 @@
 #ifndef PETESTSENDERFRONTEND_H
 #define PETESTSENDERFRONTEND_H
 
+#include <systemc.h>
+
 #include "noccommon.h"
 #include "networkinterfacefrontendbase.h"
 

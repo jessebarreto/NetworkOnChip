@@ -3,8 +3,6 @@
 
 #include <systemc.h>
 
-#include "noccommon.h"
-
 /*!
  * \brief The PETestSender class is a test module of an IP-Core to send a message char-by-char using the NoC.
  */

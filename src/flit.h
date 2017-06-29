@@ -3,7 +3,16 @@
 
 #include <systemc.h>
 
-#include "noccommon.h"
+// Flit Parameters
+static const unsigned FLIT_SOURCE_SIZE = 8; // bits
+static const unsigned FLIT_DESTINATION_SIZE = 8; // bits
+static const unsigned FLIT_PACKET_SIZE = 16; // bits
+static const unsigned FLIT_SIZE = FLIT_SOURCE_SIZE + FLIT_DESTINATION_SIZE + FLIT_PACKET_SIZE;
+
+// Common flit data type
+typedef sc_uint<FLIT_SIZE> flit_t;
+typedef sc_uint<FLIT_SIZE/2> halfflit_t;
+typedef sc_uint<FLIT_SIZE/4> quarterflit_t;
 
 /*!
  * \brief The Flit class is responsible to represent the data inside of a Flit.

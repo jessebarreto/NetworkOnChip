@@ -3,10 +3,9 @@
 
 #include <systemc.h>
 
-#include "noccommon.h"
-#include "routerchannel.h"
-#include "inetworkinterfacefrontend.h"
 #include "flit.h"
+#include "inetworkinterfacefrontend.h"
+#include "irouterchannel.h"
 
 /*!
  * \brief The NetworkInterface class is responsible for connecting a Processor element to its router which are connect
@@ -30,13 +29,13 @@ class NetworkInterface : public sc_module
 
     std::vector<Flit *> _receivePacket;
 
-    void _threadRead();
+    void _threadReadFromShell();
 
-    void _threadWrite();
+    void _threadWriteToShell();
 
     void _packMessage(unsigned destinationId, const std::vector<uint32_t> &message);
 
-    const void _unpackMessage(unsigned *sourceId, std::vector<uint32_t> *message);
+    const void _unpackMessage(int *sourceId, std::vector<uint32_t> *message);
 
     void _sendToRouter();
 

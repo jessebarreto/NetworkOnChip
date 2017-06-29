@@ -1,5 +1,7 @@
 #include "petestsender.h"
 
+#include "nocdebug.h"
+
 PETestSender::PETestSender(sc_module_name name) :
     sc_module(name)
 {

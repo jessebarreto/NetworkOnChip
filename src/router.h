@@ -3,8 +3,7 @@
 
 #include <systemc.h>
 
-#include "noccommon.h"
-#include "routerchannel.h"
+#include "irouterchannel.h"
 
 /*!
  * \brief The Router class is responsible for routing messages from the IP-Cores inside of the NoC.
