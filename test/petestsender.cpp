@@ -22,10 +22,8 @@ const std::string PETestSender::getName()
 
 void PETestSender::_threadRun()
 {
-    for (;;) {
-        for (char c : _message) {
-            NoCDebug::printDebug(std::string("Test Sender filling fifo: ") + c, NoCDebug::PE);
-             fifoOutput.write(c);
-        }
+    for (char c : _message) {
+        NoCDebug::printDebug(std::string("Test Sender filling fifo: ") + c, NoCDebug::PE);
+         fifoOutput.write(c);
     }
 }

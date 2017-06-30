@@ -5,7 +5,7 @@
 #include <iostream>
 
 // Defines the Debug Level to be printed.
-#define NOC_COMMON_DEBUG (NoCDebug::Assembly | NoCDebug::Channel | NoCDebug::Router | NoCDebug::NI | NoCDebug::PE)
+#define NOC_COMMON_DEBUG NoCDebug::PE //(NoCDebug::Assembly | NoCDebug::Channel | NoCDebug::Router | NoCDebug::NI | NoCDebug::PE)
 
 /*!
  * Namespace with everything related to Debug.

@@ -59,12 +59,12 @@ void NetworkInterface::_threadWriteToShell()
     }
 }
 
-void NetworkInterface::_packMessage(unsigned destinationId, const std::vector<uint32_t> &message)
+void NetworkInterface::_packMessage(unsigned destinationId, const std::vector<uint32_t> &payload)
 {
     NoCDebug::printDebug("NI-ID:" + std::to_string(_networkInterfaceId) + " packeting message.", NoCDebug::NI);
     _sendPacket.clear();
     uint16_t packetSize = static_cast<uint16_t>(std::min(static_cast<size_t>(std::numeric_limits<uint16_t>::max()),
-                                                         message.size()));
+                                                         payload.size()));
     // Create Head Flit
     flit_t headerData = 0;
 
@@ -76,7 +76,7 @@ void NetworkInterface::_packMessage(unsigned destinationId, const std::vector<ui
 
     // Create Tail Flits
     for (uint16_t flitIndex = 0; flitIndex < packetSize; flitIndex++) {
-        flit_t tailFlit = message.at(flitIndex);
+        flit_t tailFlit = payload.at(flitIndex);
         flit = new Flit(tailFlit, 0);
         _sendPacket.push_back(flit);
     }
@@ -85,17 +85,17 @@ void NetworkInterface::_packMessage(unsigned destinationId, const std::vector<ui
     // the Flit objects.
 }
 
-const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t> *message)
+const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t> *payload)
 {
     NoCDebug::printDebug("NI-ID:" + std::to_string(_networkInterfaceId) + " unpacketing message.", NoCDebug::NI);
     // Unpack Head Flit
     Flit *flit = _receivePacket.at(0);
     *sourceId = flit->getData().range(31, 24);
-    message->clear();
+    payload->clear();
     uint16_t packetSize = flit->getData().range(23, 16);
     for (uint16_t flitIndex = 1; flitIndex <= packetSize; flitIndex++) {
         flit = _receivePacket.at(flitIndex);
-        message->push_back(flit->getData().to_uint());
+        payload->push_back(flit->getData().to_uint());
     }
 
     // Now delete all the flits.
@@ -112,6 +112,9 @@ void NetworkInterface::_sendToRouter()
     for (Flit *flit : _sendPacket) {
         localChannel->sendFlit(flit);
     }
+
+    // Clear Send Packet
+    _sendPacket.clear();
 }
 
 void NetworkInterface::_receiveFromRouter()

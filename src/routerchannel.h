@@ -11,13 +11,8 @@
  * data back and forth between these routers.
  *
  * Note: To use the router channel it's necessary to follow the following steps:
- *      1. Sender calls validSender.
- *      2. Sender calls sendFlit.
- *      3. (Optional) Sender waits for acknowledge status from channel - calling acknowledgeSender.
- *
- *      4. Receiver calls validReceiver.
- *      5. Receiver calls receiveFlit.
- *      6. (Optional) Receiver waits for acknowledge status from channel - calling acknowledgeReceiver.
+ *      1. Sender sends data using sendFlit().
+ *      2. Receiver receives data using receiveFlit().
  */
 class RouterChannel : public IRouterChannel, public sc_prim_channel
 {
@@ -36,8 +31,35 @@ class RouterChannel : public IRouterChannel, public sc_prim_channel
      */
     Flit* _transmittedFlit;
 
-    sc_event _valid, _acknowledge, _busy;
+    /*!
+     * \brief This event notifies the channel that a module is sending a flit to it.
+     */
+    sc_event _valid;
 
+    /*!
+     * \brief This event notifies the channel that a module sending data has been read by a receiver
+     * module.
+     */
+    sc_event _acknowledge;
+
+    /*!
+     * \brief This event notifies the channel that it is busy.
+     */
+    sc_event _busy;
+
+    /*!
+     * \brief This flag hlds whether the channel is valid.
+     */
+    bool _validFlag;
+
+    /*!
+     * \brief This flag holds whether the channel is acknowled.
+     */
+    bool _acknowledgeFlag;
+
+    /*!
+     * \brief This flag holds whether the channel is busy.
+     */
     bool _busyFlag;
 
 public:

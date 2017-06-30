@@ -31,17 +31,44 @@ class NetworkInterfaceFrontEndBase : public INetworkInterfaceFrontEnd
      */
     unsigned _payloadSrc;
 
+    /*!
+     * \brief Synchronizing events and flags.
+     */
     sc_event _ack, _valid;
-
+    bool _ackFlag, _validFlag;
     sc_event _writing, _reading;
+    bool _writingFlag, _readingFlag;
 
 protected:
+    /*!
+     * \brief This class constructor.
+     */
+    NetworkInterfaceFrontEndBase();
+
+    /*!
+     * \brief This method sends a payload from the shell to the kernel.
+     * \param payload The payload to be sent.
+     * \param dst The destination of this payload.
+     */
     void sendPayload(const std::vector<uint32_t> &payload, int dst);
 
+    /*!
+     * \brief This method receives a payload to the shell from the kernel.
+     * \param payload The payload to be received.
+     * \param src the source of this payload.
+     */
     void receivePayload(std::vector<uint32_t> &payload, int *src);
 public:
+    /*!
+     * \brief This method shouldn't not be used by the shell.
+     * Note: Please, do not use it by the shell.
+     */
     void kernelReceivePayload(std::vector<uint32_t> &payload, int *dst) override;
 
+    /*!
+     * \brief This method shouldn't not be used by the shell.
+     * Note: Please, do not use it by the shell.
+     */
     void kernelSendPayload(const std::vector<uint32_t> &payload, int *src) override;
 };
 
