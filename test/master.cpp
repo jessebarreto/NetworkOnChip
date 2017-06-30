@@ -1,5 +1,9 @@
 #include "master.h"
 
+#include <string>
+
+#include "nocdebug.h"
+
 Master::Master(sc_module_name name) : sc_module(name)
 {
     data = new int[5];
@@ -15,11 +19,12 @@ Master::Master(sc_module_name name) : sc_module(name)
 void Master::_threadRun()
 {
     for (int cnt = 0;cnt < 5;cnt++) {
-        std::cout << "Master -> MShell - " << masterOut.num_attributes() << " - " << masterOut.num_free() << std::endl;
+        NoCDebug::printDebug("Master -> MShell      DATA: " + std::to_string(data[cnt]), NoCDebug::PE);
         masterOut.write(data[cnt]);
-        std::cout << "      DATA: " <<  data[cnt] << " - " << masterOut.num_attributes() << " - " << masterOut.num_free() << std::endl;
-        char read = masterIn.read();
-        std::cout << "Master <- MShell" << std::endl;
-        std::cout << cnt+1 << " MLendo: " <<  read << std::endl;
+        char read;
+        masterIn.read(read);
+        std::string msg("Master <- MShell      DATA: ");
+        msg += read;
+        NoCDebug::printDebug(msg, NoCDebug::PE);
     }
 }

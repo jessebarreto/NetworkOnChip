@@ -1,8 +1,10 @@
 #include "slave.h"
 
+#include "nocdebug.h"
+
 Slave::Slave(sc_module_name name)
 {
-    _send = 'I';
+    _send = 'A';
 
     SC_THREAD(_threadRun);
 }
@@ -11,8 +13,8 @@ void Slave::_threadRun()
 {
     for (;;) {
         int read = slaveIn.read();
-        std::cout << " SLendo: " <<  read << std::endl;;
-        std::cout << " SEscrevendo: " << std::endl;;
-        slaveOut.write(_send);
+        NoCDebug::printDebug("Slave <- SShell       DATA: " + std::to_string(read), NoCDebug::PE);
+        NoCDebug::printDebug("Slave -> SShell", NoCDebug::PE);
+        slaveOut.write(_send++);
     }
 }

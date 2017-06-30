@@ -1,5 +1,7 @@
 #include "slaveshell.h"
 
+#include "nocdebug.h"
+
 SlaveShell::SlaveShell(sc_module_name name) :
     sc_module(name)
 {
@@ -14,19 +16,19 @@ void SlaveShell::_threadRun()
         // Reading
         std::vector<uint32_t> payload;
         int payloadSrc;
-        std::cout << "SShell <- Channel" << std::endl;
+        NoCDebug::printDebug("SShell <- Channel", NoCDebug::NI);
         receivePayload(payload, &payloadSrc);
         rec = payload.at(0);
-        std::cout << "SShell -> Slave" << std::endl;
+        NoCDebug::printDebug("SShell -> Slave", NoCDebug::NI);
         shellOut.write(rec);
 
         // Writing
-        std::cout << "SShell <- Slave" << std::endl;
+        NoCDebug::printDebug("SShell <- Slave", NoCDebug::NI);
         send = shellIn.read();
         payload.clear();
         payload.push_back(static_cast<uint32_t>(send));
         int payloadDst = 0;
-        std::cout << "SShell -> Channel" << std::endl;
+        NoCDebug::printDebug("SShell -> Channel", NoCDebug::NI);
         sendPayload(payload, payloadDst);
         payload.clear();
     }

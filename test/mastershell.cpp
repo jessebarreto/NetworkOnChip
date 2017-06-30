@@ -1,5 +1,7 @@
 #include "mastershell.h"
 
+#include "nocdebug.h"
+
 MasterShell::MasterShell(sc_module_name name) :
     sc_module(name)
 {
@@ -12,21 +14,21 @@ void MasterShell::_threadRun()
     char rec;
     for (;;) {
         // Writing
-        std::cout << "MShell <- Master - " << shellIn.num_available() << std::endl;
+        NoCDebug::printDebug("MShell <- Master", NoCDebug::NI);
         shellIn.read(send);
         std::vector<uint32_t> payload;
         payload.push_back(send);
         int payloadDst = 1;
-        std::cout << "MShell -> Channel" << std::endl;
+        NoCDebug::printDebug("MShell -> Channel", NoCDebug::NI);
         sendPayload(payload, payloadDst);
         payload.clear();
 
         // Reading
         int payloadSrc;
-        std::cout << "MShell <- Channel" << std::endl;
+        NoCDebug::printDebug("MShell <- Channel", NoCDebug::NI);
         receivePayload(payload, &payloadSrc);
         rec = payload.at(0);
-        std::cout << "MShell -> Master" << std::endl;
+        NoCDebug::printDebug("MShell -> Master", NoCDebug::NI);
         shellOut.write(rec);
 
         // Só lê do Master
