@@ -2,8 +2,8 @@
  * - main.cpp
  * 
  * 
- *  Created by José Adalberto F. Gualeve  and Marlon Soudre on 07/07/15.
- *  Modified by José Adalberto F. Gualeve on 05/05/16
+ *  Created by Josï¿½ Adalberto F. Gualeve  and Marlon Soudre on 07/07/15.
+ *  Modified by Josï¿½ Adalberto F. Gualeve on 05/05/16
  *  Modified by Felipe Cabral e Eduardo Mesquita on 05/07/16.
  * Copyright 2015,2016 - All rights reserved 
  */
@@ -68,7 +68,7 @@ int sc_main ( int argc, char *argv[]) {
     shellme_mem_v0 m_shell("m_shell",3);
     mem_mips mem("mem", INT_MEM_SIZE,3);
 
-    Slave slave0("slave0",4);  // associado ao nó 2 (r20)
+    Slave slave0("slave0",4);  // associado ao nï¿½ 2 (r20)
 	//Slave slave1("slave1",3); 
 	//Slave slave2("slave2",4); 
     Slave slave3("slave3",5); 
@@ -236,4 +236,3 @@ int sc_main ( int argc, char *argv[]) {
 
     return 0;
 }
-
