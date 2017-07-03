@@ -50,19 +50,23 @@
 int sc_main(int argc, char *argv[])
 {
     // Routers
+    NoCDebug::printDebug(std::string("Adding Routers:"), NoCDebug::Assembly);
     std::vector<Router *> routers;
     for (unsigned i = 0; i < NOC_SIZE; i++) {
         std::string routerName("Router_");
         routerName += std::to_string(i);
         routers.push_back(new Router(routerName.c_str(), i));
+        NoCDebug::printDebug(std::string("> " + routerName), NoCDebug::Assembly);
     }
 
     // Network Interfaces
+    NoCDebug::printDebug(std::string("Adding Network Interfaces:"), NoCDebug::Assembly);
     std::vector<NetworkInterface *> networkInterfaces;
     for (unsigned i = 0; i < NOC_SIZE; i++) {
         std::string niName("NetworkInterface_");
         niName += std::to_string(i);
         networkInterfaces.push_back(new NetworkInterface(niName.c_str(), i));
+        NoCDebug::printDebug(std::string("> " + niName), NoCDebug::Assembly);
     }
 
     // Processor Elements Connections

@@ -19,7 +19,7 @@ void NetworkInterface::connectFrontEnd(INetworkInterfaceFrontEnd *networkInterfa
 void NetworkInterface::_threadReadFromShell()
 {
     if (!_frontEnd) {
-        std::string message("Front-End Not Connected NI-Id:");
+        std::string message("Shell Read - Front-End Not Connected NI-Id:");
         NoCDebug::printDebug(message + std::to_string(_networkInterfaceId) + " Name: " + name(), NoCDebug::NI, true);
     } else {
         for (;;) {
@@ -41,7 +41,7 @@ void NetworkInterface::_threadReadFromShell()
 void NetworkInterface::_threadWriteToShell()
 {
     if (!_frontEnd) {
-        std::string message("Front-End Not Connected NI-Id:");
+        std::string message("Shell Write - Front-End Not Connected NI-Id:");
         NoCDebug::printDebug(message + std::to_string(_networkInterfaceId) + " Name: " + name(), NoCDebug::NI, true);
     } else {
         for (;;) {
