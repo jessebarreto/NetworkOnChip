@@ -20,7 +20,6 @@ set(CMAKE_AUTOMOC ON)
 
 # Find SystemC
 set(SYSTEMC_HOME /opt/systemc-2.3.1a)
-#set(SYSTEMC_HOME /usr/local/systemc-2.3.1/)
 include_directories(SYSTEM "${SYSTEMC_HOME}/include")
 set(SYSTEMC_LIBRARIES ${SYSTEMC_HOME}/lib-linux64/libsystemc.a ${SYSTEMC_HOME}/lib-linux64/libsystemc-2.3.1.so)
 set (CMAKE_CXX_FLAGS "-pthread")

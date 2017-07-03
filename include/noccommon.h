@@ -53,12 +53,12 @@ static Map_t PROCESSORS_MAP;
  * \param routerSource The source router.
  * \param routerDestination The destination router.
  * \param channel The channel that will be used to connect both routers.
- * \param directionHorizontal The direction of this connection. (Horizontal = false, Vertical = true)
+ * \param direction The direction of this connection. (Horizontal = true, Vertical = false)
  */
 inline void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel,
-                           bool directionHorizontal)
+                           bool direction)
 {
-    if (directionHorizontal) {
+    if (direction) {
         routerSource.westChannel(channel);
         routerDestination.eastChannel(channel);
     } else {
