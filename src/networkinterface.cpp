@@ -45,6 +45,9 @@ void NetworkInterface::_threadWriteToShell()
         NoCDebug::printDebug(message + std::to_string(_networkInterfaceId) + " Name: " + name(), NoCDebug::NI, true);
     } else {
         for (;;) {
+            // Receive from front-end it's reading status
+            _frontEnd->kernelGetFrontEndReadingStatus();
+
             // Receive from router
             _receiveFromRouter();
 
@@ -52,6 +55,10 @@ void NetworkInterface::_threadWriteToShell()
             int sourceId;
             std::vector<uint32_t> sendMessage;
             _unpackMessage(&sourceId, &sendMessage);
+
+            if (sendMessage.size()) {
+                NoCDebug::printDebug("Payload read from channel is empty.", NoCDebug::NI, true);
+            }
 
             // Send Message to front-End
             _frontEnd->kernelSendPayload(sendMessage, &sourceId);
@@ -92,7 +99,7 @@ const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t>
     Flit *flit = _receivePacket.at(0);
     *sourceId = flit->getData().range(31, 24);
     payload->clear();
-    uint16_t packetSize = flit->getData().range(23, 16);
+    uint16_t packetSize = flit->getData().range(15, 0);
     for (uint16_t flitIndex = 1; flitIndex <= packetSize; flitIndex++) {
         flit = _receivePacket.at(flitIndex);
         payload->push_back(flit->getData().to_uint());
@@ -123,6 +130,9 @@ void NetworkInterface::_receiveFromRouter()
     Flit *flit;
     // Receive Header Flit
     flit = localChannel->receiveFlit();
+    if (flit->getUniqueId() == 2) {
+        std::cout << "Debug!" << std::endl;
+    }
     _receivePacket.push_back(flit);
 
     // Receive Tail Flits

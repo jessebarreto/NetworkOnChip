@@ -23,6 +23,7 @@ void ChannelTester::_runThread()
             std::cout << "tester: " << _0ID << " sending to channel." << std::endl;
             channel->sendFlit(flit);
             std::cout << "tester: " << _0ID << " sending got acknowledged." << std::endl;
+
         } else {
             _send = true;
 

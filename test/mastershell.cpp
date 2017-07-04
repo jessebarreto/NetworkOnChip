@@ -19,13 +19,13 @@ void MasterShell::_threadRun()
         std::vector<uint32_t> payload;
         payload.push_back(send);
         int payloadDst = 1;
-        NoCDebug::printDebug("MShell -> Channel", NoCDebug::NI);
+        NoCDebug::printDebug("MShell -> NIM", NoCDebug::NI);
         sendPayload(payload, payloadDst);
         payload.clear();
 
         // Reading
         int payloadSrc;
-        NoCDebug::printDebug("MShell <- Channel", NoCDebug::NI);
+        NoCDebug::printDebug("MShell <- NIM", NoCDebug::NI);
         receivePayload(payload, &payloadSrc);
         rec = payload.at(0);
         NoCDebug::printDebug("MShell -> Master", NoCDebug::NI);

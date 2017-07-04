@@ -70,6 +70,8 @@ public:
      * Note: Please, do not use it by the shell.
      */
     void kernelSendPayload(const std::vector<uint32_t> &payload, int *src) override;
+
+    bool kernelGetFrontEndReadingStatus() override;
 };
 
 #endif // NETWORKINTERFACEFRONTENDBASE_H

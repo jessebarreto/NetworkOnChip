@@ -54,6 +54,12 @@ public:
      * \return This router unique identification name.
      */
     const int getIdNumber();
+    
+    void routing();
+    
+    void arbitrer();
+    
+    
 };
 
 #endif // ROUTER_H

@@ -36,6 +36,8 @@ public:
      * \param src The source of this data.
      */
     virtual void kernelSendPayload(const std::vector<uint32_t> &payload, int *src) = 0;
+
+    virtual bool kernelGetFrontEndReadingStatus() = 0;
 };
 
 #endif // INETWORKINTERFACEFRONTEND_H

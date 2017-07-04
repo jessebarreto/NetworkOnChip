@@ -52,6 +52,8 @@ void RouterChannel::sendFlit(Flit *flit)
         wait(_acknowledge);
     }
     _acknowledgeFlag = false;
+    _busyFlag = false;
+    _busy.notify(SC_ZERO_TIME);
 }
 
 Flit *RouterChannel::receiveFlit()
@@ -67,8 +69,6 @@ Flit *RouterChannel::receiveFlit()
 
     _acknowledge.notify(SC_ZERO_TIME);
     _acknowledgeFlag = true;
-    _busy.notify(SC_ZERO_TIME);
-    _busyFlag = false;
 
     return _transmittedFlit;
 }

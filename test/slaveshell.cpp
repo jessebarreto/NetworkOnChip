@@ -16,7 +16,7 @@ void SlaveShell::_threadRun()
         // Reading
         std::vector<uint32_t> payload;
         int payloadSrc;
-        NoCDebug::printDebug("SShell <- Channel", NoCDebug::NI);
+        NoCDebug::printDebug("SShell <- SKernel", NoCDebug::NI);
         receivePayload(payload, &payloadSrc);
         rec = payload.at(0);
         NoCDebug::printDebug("SShell -> Slave", NoCDebug::NI);
@@ -28,7 +28,7 @@ void SlaveShell::_threadRun()
         payload.clear();
         payload.push_back(static_cast<uint32_t>(send));
         int payloadDst = 0;
-        NoCDebug::printDebug("SShell -> Channel", NoCDebug::NI);
+        NoCDebug::printDebug("SShell -> SKernel", NoCDebug::NI);
         sendPayload(payload, payloadDst);
         payload.clear();
     }

@@ -97,3 +97,22 @@ add_executable( BasicShellCommunicationTest #Executable Binary
                 include/nocdebug.h
                )
 target_link_libraries(BasicShellCommunicationTest ${SYSTEMC_LIBRARIES})
+
+# Compile Executable
+add_executable( RouterTest #Executable Binary
+                test/routertester.cpp #Source List
+                src/flit.cpp
+                src/router.cpp
+                src/routerchannel.cpp
+                src/networkinterface.cpp
+                src/networkinterfacefrontendbase.cpp
+                test/master.cpp
+                test/mastershell.cpp
+                test/slave.cpp
+                test/slaveshell.cpp
+                include/noccommon.h #Include List
+                include/irouterchannel.h
+                include/inetworkinterfacefrontend.h
+                include/nocdebug.h
+               )
+target_link_libraries(RouterTest ${SYSTEMC_LIBRARIES})

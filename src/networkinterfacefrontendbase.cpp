@@ -58,6 +58,7 @@ void NetworkInterfaceFrontEndBase::kernelSendPayload(const std::vector<uint32_t>
     for (;!_readingFlag;) {
         wait(_reading);
     }
+
     _readingFlag = false;
 
     _valid.notify();
@@ -65,4 +66,12 @@ void NetworkInterfaceFrontEndBase::kernelSendPayload(const std::vector<uint32_t>
 
     _payload = payload;
     _payloadSrc = *src;
+}
+
+bool NetworkInterfaceFrontEndBase::kernelGetFrontEndReadingStatus()
+{
+    for (;!_readingFlag;) {
+        wait(_reading);
+    }
+    return _readingFlag;
 }
