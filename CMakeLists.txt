@@ -86,22 +86,14 @@ target_link_libraries(NoCNetworkInterfaceTester ${SYSTEMC_LIBRARIES})
 # Compile Executable
 add_executable( BasicShellCommunicationTest #Executable Binary
                 test/basicshellscommunication.cpp #Source List
-                src/flit.cpp
-                src/router.cpp
-                src/routerchannel.cpp
-                src/networkinterface.cpp
                 src/networkinterfacefrontendbase.cpp
-                test/petestsender.cpp # Test List
-                test/petestsenderfrontend.cpp
-                test/petestreceiver.cpp
-                test/petestreceiverfrontend.cpp
-                include/specialkernel.cpp
+                include/specialkernel.cpp # Test List
                 test/master.cpp
                 test/slave.cpp
                 test/slaveshell.cpp
                 test/mastershell.cpp
-                include/noccommon.h #Include List
-                include/irouterchannel.h
+                #Include List
                 include/inetworkinterfacefrontend.h
+                include/nocdebug.h
                )
 target_link_libraries(BasicShellCommunicationTest ${SYSTEMC_LIBRARIES})
