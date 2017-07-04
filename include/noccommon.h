@@ -31,8 +31,8 @@
 const unsigned ROUTER_BUFFER_SIZE = 32; // Number of Flits of a router channel buffer
 
 // NoC Topology Characteristics
-const unsigned NOC_SIZE = 2; // Number of Processor Elements
-const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
+const unsigned NOC_SIZE = 9; // Number of Processor Elements
+const unsigned NOC_ROW_SIZE = 3; // Number of PE per row
 
 // Link Type
 enum Link {
@@ -55,8 +55,7 @@ static Map_t PROCESSORS_MAP;
  * \param channel The channel that will be used to connect both routers.
  * \param direction The direction of this connection. (Horizontal = true, Vertical = false)
  */
-inline void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel,
-                           bool direction)
+inline void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel, bool direction)
 {
     if (direction) {
         routerSource.westChannel(channel);
@@ -112,18 +111,19 @@ inline void connectEmptyChannels(Router *router, int routerId, std::vector<Route
 }
 
 // Assemble NoC Topology
+//
 // Type A - Horizontal Connection
-// Source Channel: East
-// Destination Channel: West
+//  Source Channel: East
+//  Destination Channel: West
 //
 // Type B - Vertical Connection
-// Source Channel: South
+//  Source Channel: South
 //  Destination Channel: North
 //
-//		   B
+//		  B
 //	      ||
 //	      ||
-//	A ===(ri)
+//	A ===(Ri)
 //
 // New routers must be connected to their left-side and up-side routers
 // Should them exist and respecting the topology
@@ -159,6 +159,139 @@ inline void assembleNoC(std::vector<Router *> &routers, std::vector<RouterChanne
         }
     }
 }
+
+
+inline void routingXY(unsigned source, unsigned dest) {
+
+    //Fail Safe: Source
+    if (source < 0 || source > NOC_SIZE - 1) {
+
+        NoCDebug::printDebug(std::string("Routing XY: Source position isn't part of the NOC"), NoCDebug::Router, true);
+
+    }
+
+    //Fail Safe: Dest
+    if (dest < 0 || dest > NOC_SIZE - 1) {
+
+        NoCDebug::printDebug(std::string("Routing XY: Dest position isn't part of the NOC"), NoCDebug::Router,true);
+
+    }
+
+    //Max Routing steps
+    unsigned step_max = (NOC_ROW_SIZE - 1) + unsigned (ceil(float (NOC_SIZE / NOC_ROW_SIZE)) -1);
+
+    bool routing = false;
+    unsigned stepXY = 0;
+
+    while (!routing && stepXY <= step_max) {
+
+        NoCDebug::printDebug(std::string("Routing XY: " + std::to_string(source) + " --> " + std::to_string(dest)), NoCDebug::Router);
+
+        //Identify Row (Y)
+        //Source
+        unsigned source_router_y = ceil(float (source + 1) / NOC_ROW_SIZE);
+        //Dest
+        unsigned dest_router_y = ceil(float (dest + 1) / NOC_ROW_SIZE);
+        //DeltaX
+        int deltaY = dest_router_y - source_router_y;
+
+        //Identify Column (X)
+        //Source
+        unsigned source_router_x = (source + 1) - (source_router_y - 1) * NOC_ROW_SIZE;
+        //Dest
+        unsigned dest_router_x = (dest + 1) - (dest_router_y - 1) * NOC_ROW_SIZE;
+        //DeltaY
+        int deltaX = dest_router_x - source_router_x;
+
+        NoCDebug::printDebug(std::string("Routing XY: DeltaX " + std::to_string(deltaX) + " DeltaY " + std::to_string(deltaY)), NoCDebug::Router);
+
+        //Move in X
+        if (deltaX != 0) {
+
+            int stepX = (deltaX > 0) ? 1 : -1;
+
+            unsigned updated_source_router_y = ceil(float (source + stepX + 1) / NOC_ROW_SIZE);
+
+            // 1. Check if the current router is in same row as the target router (SourceX = UpdateY)
+            if (source_router_y == updated_source_router_y) {
+
+                //Move Source
+                source = source + stepX;
+                NoCDebug::printDebug(std::string("Routing XY: Move X"), NoCDebug::Router);
+
+                //Link Identification
+                if (stepX > 0) {
+                    NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::East)), NoCDebug::Router);
+                } else {
+                    NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::West)), NoCDebug::Router);
+                }
+
+            }
+
+            //Error
+            else {
+
+                NoCDebug::printDebug(std::string("Routing XY: Wrong Move X"), NoCDebug::Router, true);
+
+            }
+
+        }
+
+        //Move in Y
+        else if (deltaY != 0) {
+
+            int stepY = (deltaY > 0) ? 1 : -1;
+
+            unsigned updated_source_router_y = ceil(float (source + stepY * NOC_ROW_SIZE + 1) / NOC_ROW_SIZE);
+            unsigned updated_source_router_x = (source + stepY * NOC_ROW_SIZE + 1) - (updated_source_router_y - 1) * NOC_ROW_SIZE;
+
+            // 1. Check if the current router is in same column as the target router (SourceX = UpdateX)
+            if (source_router_x == updated_source_router_x) {
+
+                //Move Source
+                source = source + stepY * NOC_ROW_SIZE;
+                NoCDebug::printDebug(std::string("Routing XY: Move Y"), NoCDebug::Router);
+
+                //Link Identification
+                if (stepY > 0) {
+                    NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::South)), NoCDebug::Router);
+                } else {
+                    NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::North)), NoCDebug::Router);
+                }
+
+            }
+
+            //Error
+            else {
+
+                NoCDebug::printDebug(std::string("Routing XY: Wrong Move Y"), NoCDebug::Router, true);
+
+            }
+
+        }
+
+        //GG Easy
+        else {
+
+            routing = true;
+            NoCDebug::printDebug(std::string("Routing XY: In position"), NoCDebug::Router);
+
+        }
+
+        //Fail Safe: Crazy Source
+        if (source < 0 || source > NOC_SIZE - 1) {
+
+            NoCDebug::printDebug(std::string("Routing XY: Logic Fail"), NoCDebug::Router, true);
+
+        }
+
+        stepXY++;
+
+    }
+
+}
+
+
 
 inline void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerChannels,
                                  std::vector<NetworkInterface *> &networkInterfaces)

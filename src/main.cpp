@@ -79,6 +79,14 @@ int sc_main(int argc, char *argv[])
 
     connectStrayChannels(routers, routerChannels, networkInterfaces);
 
+    routingXY(0, 4); //OK
+    routingXY(1, 4); //OK
+    routingXY(0, 8); //OK
+
+    routingXY(4, 0); //OK
+    routingXY(4, 1); //OK
+    routingXY(8, 0); //OK
+
     // Start Simulation
     std::cout << "Start NoC Simulation..." << std::endl;
     sc_start();
