@@ -42,46 +42,38 @@ int main()
     // Connect Front-End
     niMaster.connectFrontEnd(&masterShell);
     niSlave.connectFrontEnd(&slaveShell);
-    RouterChannel masterLocalChannel("MasterLocalChannel");
-    niMaster.localChannel(masterLocalChannel);
-    niSlave.localChannel(masterLocalChannel);
 
-    // Connect Both Kernels Together
-//    RouterChannel masterLocalChannel("MasterLocalChannel");
-//    niMaster.localChannel(masterLocalChannel);
-//    niSlave.localChannel(masterLocalChannel);
-
-//    // Routers
-//    Router routerMaster("RouterMaster", 0);
+    // Routers
+    Router routerMaster("RouterMaster", 0);
 //    Router routerSlave("RouterSlave", 1);
 
 //    // Router Channels
-//    RouterChannel masterLocalChannel("MasterLocalChannel");
-//    RouterChannel masterNorthChannel("MasterNorthChannel");
-//    RouterChannel masterSouthChannel("MasterSouthChannel");
-//    RouterChannel masterEastChannel("MasterEastChannel");
-//    RouterChannel masterWestChannel("MasterWestChannel");
+    RouterChannel masterLocalChannel("MasterLocalChannel");
+    RouterChannel masterNorthChannel("MasterNorthChannel");
+    RouterChannel masterSouthChannel("MasterSouthChannel");
+    RouterChannel masterEastChannel("MasterEastChannel");
+    RouterChannel masterWestChannel("MasterWestChannel");
 //    RouterChannel slaveLocalChannel("SlaveLocalChannel");
 //    RouterChannel slaveNorthChannel("SlaveNorthChannel");
 //    RouterChannel slaveSouthChannel("SlaveSouthChannel");
 //    RouterChannel slaveEastChannel("SlaveEastChannel");
 ////    RouterChannel slaveWestChannel("SlaveWestChannel");
 
-//    // Connect Routers and Router Channels
-//    routerMaster.localChannel(masterLocalChannel);
-//    routerMaster.northChannel(masterNorthChannel);
-//    routerMaster.southChannel(masterSouthChannel);
-//    routerMaster.eastChannel(masterEastChannel);
-//    routerMaster.westChannel(masterWestChannel);
+    // Connect Routers and Router Channels
+    routerMaster.localChannel(masterLocalChannel);
+    routerMaster.northChannel(masterNorthChannel);
+    routerMaster.southChannel(masterSouthChannel);
+    routerMaster.eastChannel(masterEastChannel);
+    routerMaster.westChannel(masterWestChannel);
 //    routerSlave.localChannel(slaveLocalChannel);
 //    routerSlave.northChannel(slaveNorthChannel);
 //    routerSlave.southChannel(slaveSouthChannel);
 //    routerSlave.eastChannel(slaveEastChannel);
 //    routerSlave.westChannel(masterEastChannel); // Connection
 
-//    // Connect Routers and NI
-//    niMaster.localChannel(masterLocalChannel);
-//    niSlave.localChannel(slaveLocalChannel);
+    // Connect Routers and NI
+    niMaster.localChannel(masterLocalChannel);
+    niSlave.localChannel(masterWestChannel);
 
     // Run Simulation
     sc_start();

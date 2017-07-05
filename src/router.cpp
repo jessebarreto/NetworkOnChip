@@ -1,13 +1,19 @@
 #include "router.h"
 
+#include <cstdlib>
+
+#include "nocdebug.h"
+
 void Router::_localChannelThread()
 {
-    Flit *dataFlit;
-//    for (;;) {
-//        // Receives Flit from the Local Channel
-//        localChannel->
-//        localChannel->receiveFlit(dataFlit);
-//        wait(*localChannel->acknowledgeReceiver());
+    for (;;) {
+        // Receives Flit from the Local Channel
+        Flit *dataFlit = nullptr;
+        dataFlit = localChannel->receiveFlit();
+
+        // Routing the flit
+        int dst;
+        _routingMethod(dataFlit, &dst);
 
 //        // RUN
 //        // VIRTUAL CHANNEL ALLOCATION USING HEADER FLIT
@@ -18,7 +24,7 @@ void Router::_localChannelThread()
 //        localChannel->validSender();
 //        localChannel->sendFlit(dataFlit);
 //        wait(*localChannel->acknowledgeSender());
-//    }
+    }
 }
 
 void Router::_northChannelThread()
@@ -124,4 +130,14 @@ std::string Router::getName()
 const int Router::getIdNumber()
 {
     return _routerId;
+}
+
+void Router::_routingMethod(Flit *flit, int *dst)
+{
+    if (flit == nullptr) {
+        NoCDebug::printDebug("Router Id-" + std::to_string(_routerId) + " flit is nullptr.", NoCDebug::Router, true);
+        std::cerr << "file: " << __FILE__ << " line: " << __LINE__ << std::endl;
+    }
+
+
 }

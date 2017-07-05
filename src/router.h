@@ -26,6 +26,8 @@ class Router : public sc_module
     void _eastChannelThread();
     void _westChannelThread();
 
+
+    void _routingMethod(Flit *flit, int *dst);
 public:
     /*!
      * \brief Ports connections to communicate with other routers/NI.
@@ -54,12 +56,6 @@ public:
      * \return This router unique identification name.
      */
     const int getIdNumber();
-    
-    void routing();
-    
-    void arbitrer();
-    
-    
 };
 
 #endif // ROUTER_H
