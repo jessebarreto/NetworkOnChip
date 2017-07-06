@@ -31,15 +31,15 @@ namespace NoCDebug
     inline static const std::string debugTypeToString(DebugLevel type)
     {
         switch (type) {
-        case DebugLevel::PE:
+        case PE:
             return "PE";
-        case DebugLevel::NI:
+        case NI:
             return "NI";
-        case DebugLevel::Router:
+        case Router:
             return "Router";
-        case DebugLevel::Channel:
+        case Channel:
             return "Channel";
-        case DebugLevel::Assembly:
+        case Assembly:
             return "Assembly";
         default:
             return "";

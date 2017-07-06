@@ -3,6 +3,8 @@
 
 #include <systemc.h>
 
+#include "noccommon.h"
+
 #include "irouterchannel.h"
 
 /*!
@@ -18,23 +20,54 @@ class Router : public sc_module
     const unsigned _routerId;
 
     /*!
-     * \brief Threads to for each channel.
+     * \brief Buffers used at each channel input.
      */
-    void _localChannelThread();
-    void _northChannelThread();
-    void _southChannelThread();
-    void _eastChannelThread();
-    void _westChannelThread();
+    std::vector<std::pair<sc_fifo<Flit *> *, Link>> _inputBuffers;
+
+    sc_event _writeLocal, _writeNorth, _writeSouth, _writeEast, _writeWest;
+    Link _srcLocal, _srcNorth, _srcSouth, _srcEast, _srcWest;
+    std::vector<sc_mutex *> _mutexInputChannels;
+    int _arbiterLinkId;
+
+    /*!
+     * \brief A pair of threads for each channel.
+     */
+    void _localChannelReadThread();
+    void _localChannelWriteThread();
+    void _northChannelReadThread();
+    void _northChannelWriteThread();
+    void _southChannelReadThread();
+    void _southChannelWriteThread();
+    void _eastChannelReadThread();
+    void _eastChannelWriteThread();
+    void _westChannelReadThread();
+    void _westChannelWriteThread();
+
+    /*!
+     * \brief Thread to the arbiter.
+     */
+    void _arbiterThread();
+
+    /*!
+     * \brief _routingMethod
+     * \param flit
+     * \param dst
+     */
+    Link _routingMethod(Flit *flit);
+
+    void _initChannelBuffers();
+
+    void _readFromChannel(sc_port<IRouterChannel> *inputChannel, sc_fifo<Flit *> *localBuffer, Link &localBufferFlitsDstLink);
 
 public:
     /*!
      * \brief Ports connections to communicate with other routers/NI.
      */
-    sc_port<IRouterChannel> localChannel;
-    sc_port<IRouterChannel> northChannel;
-    sc_port<IRouterChannel> southChannel;
-    sc_port<IRouterChannel> westChannel;
-    sc_port<IRouterChannel> eastChannel;
+    sc_port<IRouterChannel> localChannelIn, localChannelOut;
+    sc_port<IRouterChannel> northChannelIn, northChannelOut;
+    sc_port<IRouterChannel> southChannelIn, southChannelOut;
+    sc_port<IRouterChannel> westChannelIn, westChannelOut;
+    sc_port<IRouterChannel> eastChannelIn, eastChannelOut;
 
     /*!
      * \brief Router Constructor
@@ -42,6 +75,11 @@ public:
      * \param routerId The unique identifier to this router.
      */
     Router(sc_module_name name, unsigned routerId);
+
+    /*!
+     * \brief Router Destructor.
+     */
+    ~Router();
 
     /*!
      * \brief Getter to this router name.
@@ -54,12 +92,6 @@ public:
      * \return This router unique identification name.
      */
     const int getIdNumber();
-    
-    void routing();
-    
-    void arbitrer();
-    
-    
 };
 
 #endif // ROUTER_H

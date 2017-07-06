@@ -35,6 +35,8 @@ class NetworkInterface : public sc_module
      */
     std::vector<Flit *> _receivePacket;
 
+    sc_mutex _keyThread;
+
     /*!
      * \brief Thread to read data from the shell.
      */
@@ -72,7 +74,7 @@ class NetworkInterface : public sc_module
 
 public:
     // IO
-    sc_port<IRouterChannel> localChannel;
+    sc_port<IRouterChannel> localChannelIn, localChannelOut;
 
     /*!
      * \brief Constructor

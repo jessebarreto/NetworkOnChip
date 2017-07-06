@@ -28,12 +28,16 @@ void NetworkInterface::_threadReadFromShell()
             int destinationId;
             _frontEnd->kernelReceivePayload(receivedMessage, &destinationId);
 
+            _keyThread.lock();
+
             // Packet Message
             _packMessage(destinationId, receivedMessage);
             receivedMessage.clear();
 
             // Send to Router
             _sendToRouter();
+
+            _keyThread.unlock();
         }
     }
 }
@@ -47,6 +51,8 @@ void NetworkInterface::_threadWriteToShell()
         for (;;) {
             // Receive from front-end it's reading status
             _frontEnd->kernelGetFrontEndReadingStatus();
+
+            _keyThread.lock();
 
             // Receive from router
             _receiveFromRouter();
@@ -62,6 +68,8 @@ void NetworkInterface::_threadWriteToShell()
 
             // Send Message to front-End
             _frontEnd->kernelSendPayload(sendMessage, &sourceId);
+
+            _keyThread.unlock();
         }
     }
 }
@@ -117,7 +125,7 @@ const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t>
 void NetworkInterface::_sendToRouter()
 {
     for (Flit *flit : _sendPacket) {
-        localChannel->sendFlit(flit);
+        localChannelOut->sendFlit(flit);
     }
 
     // Clear Send Packet
@@ -129,16 +137,13 @@ void NetworkInterface::_receiveFromRouter()
     _receivePacket.clear();
     Flit *flit;
     // Receive Header Flit
-    flit = localChannel->receiveFlit();
-    if (flit->getUniqueId() == 2) {
-        std::cout << "Debug!" << std::endl;
-    }
+    flit = localChannelIn->receiveFlit();
     _receivePacket.push_back(flit);
 
     // Receive Tail Flits
     uint16_t packetSize = flit->getData().range(15, 0);
     for (uint16_t flitIndex = 0; flitIndex < packetSize; flitIndex++) {
-        flit = localChannel->receiveFlit();
+        flit = localChannelIn->receiveFlit();
         _receivePacket.push_back(flit);
     }
 }

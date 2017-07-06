@@ -26,17 +26,21 @@ int main()
     NetworkInterface receiverKernel("ReceiverNI", 0);
     PETestReceiver receiverPE("ReceiverPE");
     PETestReceiverFrontEnd receiverShell("ReceiverShell");
+
     // Connect PE and Shell
     sc_fifo<char> receiverFIFO(1);
     receiverShell.fifoOutput(receiverFIFO);
     receiverPE.fifoInput(receiverFIFO);
+
     // Connect Kernel and Shell
     receiverKernel.connectFrontEnd(&receiverShell);
 
     // Connect Kernels
-    RouterChannel channel("Channel");
-    senderKernel.localChannel(channel);
-    receiverKernel.localChannel(channel);
+    RouterChannel channelIn("ChannelIn"), channelOut("channelOut");
+    senderKernel.localChannelIn(channelIn);
+    senderKernel.localChannelOut(channelOut);
+    receiverKernel.localChannelOut(channelIn);
+    receiverKernel.localChannelIn(channelOut);
 
     sc_start();
 
