@@ -26,6 +26,7 @@ class Router : public sc_module
 
     sc_event _writeLocal, _writeNorth, _writeSouth, _writeEast, _writeWest;
     Link _srcLocal, _srcNorth, _srcSouth, _srcEast, _srcWest;
+    std::vector<sc_mutex *> _mutexInputChannels;
     int _arbiterLinkId;
 
     /*!

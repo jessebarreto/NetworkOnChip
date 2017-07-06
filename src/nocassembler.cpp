@@ -15,7 +15,7 @@ void connectRouters(Router &routerSource, Router &routerDestination, RouterChann
         routerDestination.westChannelIn(outputChannel);
     } else {
         routerSource.southChannelIn(inputChannel);
-        routerDestination.northChannelOut(outputChannel);
+        routerDestination.northChannelOut(inputChannel);
         routerSource.southChannelOut(outputChannel);
         routerDestination.northChannelIn(outputChannel);
     }

@@ -16,6 +16,13 @@ Router::Router(sc_module_name name, unsigned routerId) :
     _srcWest(Link::Local)
 {
     _initChannelBuffers();
+
+    _mutexInputChannels.push_back(new sc_mutex("LocalChannelMutex"));
+    _mutexInputChannels.push_back(new sc_mutex("NorthChannelMutex"));
+    _mutexInputChannels.push_back(new sc_mutex("SouthChannelMutex"));
+    _mutexInputChannels.push_back(new sc_mutex("EastChannelMutex"));
+    _mutexInputChannels.push_back(new sc_mutex("WestChannelMutex"));
+
     _arbiterLinkId = 0;
 
     SC_THREAD(_localChannelReadThread);
@@ -50,6 +57,13 @@ Router::~Router()
             pair.first = nullptr;
         }
     }
+
+    // Destroy the Mutexes
+    for (sc_mutex *mutex : _mutexInputChannels) {
+        if (mutex != nullptr) {
+            delete mutex;
+        }
+    }
 }
 
 std::string Router::getName()
@@ -69,25 +83,35 @@ void Router::_arbiterThread()
         if (pair.first->num_available() != 0) {
              switch (pair.second) {
              case Link::West:
-                 _writeWest.notify();
-                 _srcWest = Link(_arbiterLinkId);
+                 if (_mutexInputChannels[_arbiterLinkId]->trylock() != -1) {
+                    _writeWest.notify();
+                    _srcWest = Link(_arbiterLinkId);
+                 }
                  break;
              case Link::East:
-                 _writeEast.notify();
-                 _srcEast = Link(_arbiterLinkId);
+                 if (_mutexInputChannels[_arbiterLinkId]->trylock() != -1) {
+                    _writeEast.notify();
+                    _srcEast = Link(_arbiterLinkId);
+                 }
                  break;
              case Link::South:
-                 _writeSouth.notify();
-                 _srcSouth = Link(_arbiterLinkId);
+                 if (_mutexInputChannels[_arbiterLinkId]->trylock() != -1) {
+                    _writeSouth.notify();
+                    _srcSouth = Link(_arbiterLinkId);
+                 }
                  break;
              case Link::North:
-                 _writeNorth.notify();
-                 _srcNorth = Link(_arbiterLinkId);
+                 if (_mutexInputChannels[_arbiterLinkId]->trylock() != -1) {
+                    _writeNorth.notify();
+                    _srcNorth = Link(_arbiterLinkId);
+                 }
                  break;
              case Link::Local:
              default:
-                 _writeLocal.notify();
-                 _srcLocal = Link(_arbiterLinkId);
+                 if (_mutexInputChannels[_arbiterLinkId]->trylock() != -1) {
+                    _writeLocal.notify();
+                    _srcLocal = Link(_arbiterLinkId);
+                 }
                  break;
              }
         }
@@ -114,49 +138,58 @@ void Router::_localChannelWriteThread()
         wait(_writeLocal);
         sc_fifo<Flit *> *localBuffer = _inputBuffers[_srcLocal].first;
         localChannelOut->sendFlit(localBuffer->read());
+        if (localBuffer->num_available() == 0) {
+            _mutexInputChannels[_srcLocal]->unlock();
+        }
     }
 }
 
 void Router::_northChannelReadThread()
 {
-//    sc_fifo<Flit *> *localBuffer = _inputBuffers[Link::North].first;
-//    Link &localBufferFlitsDstLink = _inputBuffers[Link::North].second;
-//    for (;;) {
-//        // Checks whether the internal buffer is empty
-//        if (localBuffer->num_available() == 0) {
-//            _readFromChannel(&northChannelIn, localBuffer, localBufferFlitsDstLink);
-//        }
-//    }
+    sc_fifo<Flit *> *localBuffer = _inputBuffers[Link::North].first;
+    Link &localBufferFlitsDstLink = _inputBuffers[Link::North].second;
+    for (;;) {
+        // Checks whether the internal buffer is empty
+        if (localBuffer->num_available() == 0) {
+            _readFromChannel(&northChannelIn, localBuffer, localBufferFlitsDstLink);
+        }
+    }
 }
 
 void Router::_northChannelWriteThread()
 {
-//    for (;;) {
-//        wait(_writeNorth);
-//        sc_fifo<Flit *> *localBuffer = _inputBuffers[_srcNorth].first;
-//        northChannelOut->sendFlit(localBuffer->read());
-//    }
+    for (;;) {
+        wait(_writeNorth);
+        sc_fifo<Flit *> *localBuffer = _inputBuffers[_srcNorth].first;
+        northChannelOut->sendFlit(localBuffer->read());
+        if (localBuffer->num_available() == 0) {
+            _mutexInputChannels[_srcNorth]->unlock();
+        }
+    }
 }
 
 void Router::_southChannelReadThread()
 {
-//    sc_fifo<Flit *> *localBuffer = _inputBuffers[Link::South].first;
-//    Link &localBufferFlitsDstLink = _inputBuffers[Link::South].second;
-//    for (;;) {
-//        // Checks whether the internal buffer is empty
-//        if (localBuffer->num_available() == 0) {
-//            _readFromChannel(&southChannelIn, localBuffer, localBufferFlitsDstLink);
-//        }
-//    }
+    sc_fifo<Flit *> *localBuffer = _inputBuffers[Link::South].first;
+    Link &localBufferFlitsDstLink = _inputBuffers[Link::South].second;
+    for (;;) {
+        // Checks whether the internal buffer is empty
+        if (localBuffer->num_available() == 0) {
+            _readFromChannel(&southChannelIn, localBuffer, localBufferFlitsDstLink);
+        }
+    }
 }
 
 void Router::_southChannelWriteThread()
 {
-//    for (;;) {
-//        wait(_writeSouth);
-//        sc_fifo<Flit *> *localBuffer = _inputBuffers[_srcSouth].first;
-//        southChannelOut->sendFlit(localBuffer->read());
-//    }
+    for (;;) {
+        wait(_writeSouth);
+        sc_fifo<Flit *> *localBuffer = _inputBuffers[_srcSouth].first;
+        southChannelOut->sendFlit(localBuffer->read());
+        if (localBuffer->num_available() == 0) {
+            _mutexInputChannels[_srcSouth]->unlock();
+        }
+    }
 }
 
 void Router::_eastChannelReadThread()
@@ -166,24 +199,7 @@ void Router::_eastChannelReadThread()
         Link &localBufferFlitsDstLink = _inputBuffers[Link::East].second;
         // Checks whether the internal buffer is empty
         if (localBuffer->num_available() == 0) {
-//            _readFromChannel(&eastChannelIn, localBuffer, localBufferFlitsDstLink);
-            sc_port<IRouterChannel> *inputChannel = &eastChannelIn;
-            // Receives the header flit.
-            Flit *dataFlit = nullptr;
-            dataFlit = (*inputChannel)->receiveFlit();
-
-            // Checks whether link this flit should go
-            localBufferFlitsDstLink = _routingMethod(dataFlit);
-
-            // Put the header flit to the buffer
-            localBuffer->write(dataFlit);
-
-            // Put the other flits to the buffer
-            int packageSize = dataFlit->getData().range(15, 0);
-            for (int i = 0; i < packageSize; i++) {
-                dataFlit = (*inputChannel)->receiveFlit();
-                localBuffer->write(dataFlit);
-            }
+            _readFromChannel(&eastChannelIn, localBuffer, localBufferFlitsDstLink);
 
             // When it finishes to read the package
             for (;localBuffer->num_available();) {
@@ -199,6 +215,9 @@ void Router::_eastChannelWriteThread()
         wait(_writeEast);
         sc_fifo<Flit *> *localBuffer = _inputBuffers[_srcEast].first;
         eastChannelOut->sendFlit(localBuffer->read());
+        if (localBuffer->num_available() == 0) {
+            _mutexInputChannels[_srcEast]->unlock();
+        }
     }
 }
 
@@ -220,6 +239,9 @@ void Router::_westChannelWriteThread()
         wait(_writeWest);
         sc_fifo<Flit *> *localBuffer = _inputBuffers[_srcWest].first;
         westChannelOut->sendFlit(localBuffer->read());
+        if (localBuffer->num_available() == 0) {
+            _mutexInputChannels[_srcWest]->unlock();
+        }
     }
 }
 
