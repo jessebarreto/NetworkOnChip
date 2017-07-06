@@ -27,7 +27,7 @@ const unsigned NOC_ROUTER_ROUND_ROBIN_SIZE = 3; // Number of Flits sent by the a
 
 // NoC Topology Characteristics
 const unsigned NOC_SIZE = 2; // Number of Processor Elements
-const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
+const unsigned NOC_ROW_SIZE = 1; // Number of PE per row
 
 // Link Type
 enum Link {

@@ -85,7 +85,7 @@ void assembleNoC(const std::vector<Router *> &routers, std::vector<RouterChannel
             routerChannelName += std::to_string(sourceA) + "_" + std::to_string(i);
             RouterChannel *inputChannel = new RouterChannel(std::string(routerChannelName + "_Input").c_str());
             RouterChannel *outputChannel = new RouterChannel(std::string(routerChannelName + "_Output").c_str());
-            connectRouters(*routers.at(sourceA), *routers.at(i), *inputChannel, *outputChannel, true);
+            connectRouters(*routers.at(i), *routers.at(sourceA), *inputChannel, *outputChannel, true);
             routerInputChannels.push_back(inputChannel);
             routerOutputChannels.push_back(outputChannel);
             NoCDebug::printDebug(std::string("> Connect R" + std::to_string(sourceA) + " to R" + std::to_string(i) + " from West"), NoCDebug::Assembly);

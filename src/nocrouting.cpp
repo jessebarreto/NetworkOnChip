@@ -45,10 +45,10 @@ routingInfo routingXY(unsigned source, unsigned dest)
 
             //Link Identification
             if (stepX > 0) {
-                NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::West)), NoCDebug::Router);
+                NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::East)), NoCDebug::Router);
                 rXY.link = Link::West;
             } else {
-                NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::East)), NoCDebug::Router);
+                NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::West)), NoCDebug::Router);
                 rXY.link = Link::East;
             }
 
