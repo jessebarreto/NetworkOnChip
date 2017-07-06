@@ -125,7 +125,7 @@ const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t>
 void NetworkInterface::_sendToRouter()
 {
     for (Flit *flit : _sendPacket) {
-        localChannel->sendFlit(flit);
+        localChannelOut->sendFlit(flit);
     }
 
     // Clear Send Packet
@@ -137,13 +137,13 @@ void NetworkInterface::_receiveFromRouter()
     _receivePacket.clear();
     Flit *flit;
     // Receive Header Flit
-    flit = localChannel->receiveFlit();
+    flit = localChannelIn->receiveFlit();
     _receivePacket.push_back(flit);
 
     // Receive Tail Flits
     uint16_t packetSize = flit->getData().range(15, 0);
     for (uint16_t flitIndex = 0; flitIndex < packetSize; flitIndex++) {
-        flit = localChannel->receiveFlit();
+        flit = localChannelIn->receiveFlit();
         _receivePacket.push_back(flit);
     }
 }

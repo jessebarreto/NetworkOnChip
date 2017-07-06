@@ -22,16 +22,24 @@ class Router : public sc_module
     /*!
      * \brief Buffers used at each channel input.
      */
-    std::vector<std::pair<sc_fifo<Flit *> *, int>> _inputBuffers;
+    std::vector<std::pair<sc_fifo<Flit *> *, Link>> _inputBuffers;
+
+    sc_event _writeLocal, _writeNorth, _writeSouth, _writeEast, _writeWest;
+    Link _srcLocal, _srcNorth, _srcSouth, _srcEast, _srcWest;
 
     /*!
-     * \brief Threads to for each channel.
+     * \brief A pair of threads for each channel.
      */
-    void _localChannelThread();
-    void _northChannelThread();
-    void _southChannelThread();
-    void _eastChannelThread();
-    void _westChannelThread();
+    void _localChannelReadThread();
+    void _localChannelWriteThread();
+    void _northChannelReadThread();
+    void _northChannelWriteThread();
+    void _southChannelReadThread();
+    void _southChannelWriteThread();
+    void _eastChannelReadThread();
+    void _eastChannelWriteThread();
+    void _westChannelReadThread();
+    void _westChannelWriteThread();
 
     /*!
      * \brief Thread to the arbiter.
@@ -43,19 +51,21 @@ class Router : public sc_module
      * \param flit
      * \param dst
      */
-    void _routingMethod(Flit *flit, int *dst);
+    Link _routingMethod(Flit *flit);
 
     void _initChannelBuffers();
+
+    void _readFromChannel(sc_port<IRouterChannel> *inputChannel, sc_fifo<Flit *> *localBuffer, Link &localBufferFlitsDstLink);
 
 public:
     /*!
      * \brief Ports connections to communicate with other routers/NI.
      */
-    sc_port<IRouterChannel> localChannel;
-    sc_port<IRouterChannel> northChannel;
-    sc_port<IRouterChannel> southChannel;
-    sc_port<IRouterChannel> westChannel;
-    sc_port<IRouterChannel> eastChannel;
+    sc_port<IRouterChannel> localChannelIn, localChannelOut;
+    sc_port<IRouterChannel> northChannelIn, northChannelOut;
+    sc_port<IRouterChannel> southChannelIn, southChannelOut;
+    sc_port<IRouterChannel> westChannelIn, westChannelOut;
+    sc_port<IRouterChannel> eastChannelIn, eastChannelOut;
 
     /*!
      * \brief Router Constructor

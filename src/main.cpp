@@ -40,7 +40,22 @@
 #include "router.h"
 #include "routerchannel.h"
 #include "networkinterface.h"
+#include "networkinterfacefrontendbase.h"
 #include "nocassembler.h"
+#include "nocrouting.h"
+
+// PE Includes
+#include "master.h"
+#include "mastershell.h"
+#include "slave.h"
+#include "slaveshell.h"
+//#include "ip-cores_srcs/simplemasterslave/pemastershell.h"
+//#include "ip-cores_srcs/simplemasterslave/peslave.h"
+//#include "ip-cores_srcs/simplemasterslave/peslaveshell.h"
+
+
+void connectProcessorElementToNoC(const std::vector<NetworkInterface *> &networkInterfaces,
+                                  NetworkInterfaceFrontEndBase *shell, int position);
 
 /*!
  * \brief Main Function
@@ -67,27 +82,45 @@ int sc_main(int argc, char *argv[])
         NoCDebug::printDebug(std::string("> " + niName), NoCDebug::Assembly);
     }
 
+    /////////////////////////////////////////////////////////////////////////////
     // Processor Elements Connections
+    Master masterPE("MasterPE"); MasterShell masterPEShell("MasterPEShell");
+    connectProcessorElementToNoC(networkInterfaces, &masterPEShell, 0);
+    sc_fifo<int> masterIntFifo(16);
+    sc_fifo<char> masterCharFifo(16);
+    masterPE.masterOut(masterIntFifo);
+    masterPEShell.shellIn(masterIntFifo);
+    masterPE.masterIn(masterCharFifo);
+    masterPEShell.shellOut(masterCharFifo);
+
+    Slave slave("PESlave"); SlaveShell slaveShell("SlaveShell");
+    connectProcessorElementToNoC(networkInterfaces, &slaveShell, 1);
+    sc_fifo<int> slaveInt(2);
+    sc_fifo<char> slaveChar(2);
+    slaveShell.shellOut(slaveInt);
+    slave.slaveIn(slaveInt);
+    slave.slaveOut(slaveChar);
+    slaveShell.shellIn(slaveChar);
+    /////////////////////////////////////////////////////////////////////////////
 
     // Channels or Links
-    std::vector<RouterChannel *> routerChannels;
+    std::vector<RouterChannel *> routerInputChannels, routerOutputChannels;
 
     // Assemble NoC
-    assembleNoC(routers, routerChannels);
+    assembleNoC(routers, routerInputChannels, routerOutputChannels);
 
-//    connectStrayChannels(routers, routerChannels, networkInterfaces);
+    // Stray Channels to the routers
+    connectStrayChannels(routers, routerInputChannels, routerOutputChannels, networkInterfaces);
 
-//    routingTest(0, 4); //OK
-//    routingTest(1, 4); //OK
-//    routingTest(0, 8); //OK
+    // Start Simulation
+    std::cout << "Start NoC Simulation..." << std::endl;
+    sc_start();
 
-//    routingTest(4, 0); //OK
-//    routingTest(4, 1); //OK
-//    routingTest(8, 0); //OK
+    return 0;
+}
 
-//    // Start Simulation
-//    //std::cout << "Start NoC Simulation..." << std::endl;
-//    //sc_start();
-
-//    return 0;
+void connectProcessorElementToNoC(const std::vector<NetworkInterface *> &networkInterfaces,
+                                  NetworkInterfaceFrontEndBase *shell, int position)
+{
+    networkInterfaces.at(position)->connectFrontEnd(shell);
 }

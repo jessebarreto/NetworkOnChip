@@ -7,8 +7,8 @@
  * Changes Log
  * Created by José Adalberto F. Gualeve  on 07/07/15.
  * Modified by Felipe Cabral e Eduardo Mesquita on 05/07/16.
- * Modified by Jesse Barreto de Barros on 05/06/2017
- * Copyright 2015 - All rights reserved
+ * Modified by Jesse Barreto on 05/07/2017
+ * Copyright 2015, 2016, 2017 - All rights reserved
  */
 
 #ifndef NOC_COMMON_H
@@ -23,10 +23,11 @@
 
 // Project Parameters
 const unsigned NOC_ROUTER_BUFFER_SIZE = 32; // Number of Flits of a router channel buffer
+const unsigned NOC_ROUTER_ROUND_ROBIN_SIZE = 3; // Number of Flits sent by the arbiter before it preemptively changes.
 
 // NoC Topology Characteristics
-const unsigned NOC_SIZE = 9; // Number of Processor Elements
-const unsigned NOC_ROW_SIZE = 3; // Number of PE per row
+const unsigned NOC_SIZE = 2; // Number of Processor Elements
+const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
 
 // Link Type
 enum Link {

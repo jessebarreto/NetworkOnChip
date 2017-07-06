@@ -5,56 +5,74 @@
 #include "noccommon.h"
 #include "nocdebug.h"
 
-void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel, bool direction)
+void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &inputChannel,
+                    RouterChannel &outputChannel, bool direction)
 {
     if (direction) {
-        routerSource.westChannel(channel);
-        routerDestination.eastChannel(channel);
+        routerSource.eastChannelIn(inputChannel);
+        routerDestination.westChannelOut(inputChannel);
+        routerSource.eastChannelOut(outputChannel);
+        routerDestination.westChannelIn(outputChannel);
     } else {
-        routerSource.southChannel(channel);
-        routerDestination.northChannel(channel);
+        routerSource.southChannelIn(inputChannel);
+        routerDestination.northChannelOut(outputChannel);
+        routerSource.southChannelOut(outputChannel);
+        routerDestination.northChannelIn(outputChannel);
     }
 }
 
-void connectEmptyChannels(Router *router, int routerId, std::vector<RouterChannel *> *channels)
+void connectEmptyChannels(Router *router, int routerId, std::vector<RouterChannel *> *inputChannels,
+                          std::vector<RouterChannel *> *outputChannels)
 {
     // Connect Straw Channels
-    bool isNorthDisconnected = (router->northChannel.bind_count() == 0);
-    bool isSouthDisconnected = (router->southChannel.bind_count() == 0);
-    bool isEastDisconnected = (router->eastChannel.bind_count() == 0);
-    bool isWestDisconnected = (router->westChannel.bind_count() == 0);
+    bool isNorthDisconnected = (router->northChannelIn.bind_count() == 0);
+    bool isSouthDisconnected = (router->southChannelIn.bind_count() == 0);
+    bool isEastDisconnected = (router->eastChannelIn.bind_count() == 0);
+    bool isWestDisconnected = (router->westChannelIn.bind_count() == 0);
 
     if (!(isNorthDisconnected || isSouthDisconnected || isEastDisconnected || isWestDisconnected)) {
         return;
     }
     std::string channelBaseName = std::string("RouterChannelEmpty_") + std::to_string(routerId) + std::string("_");
-    RouterChannel *channel;
+    RouterChannel *inputChannel, *outputChannel;
     if (isNorthDisconnected) {
-        channel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::North)).c_str());
-        router->northChannel(*channel);
-        channels->push_back(channel);
+        inputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::North) + "_Input").c_str());
+        outputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::North) + "_Output").c_str());
+        router->northChannelIn(*inputChannel);
+        router->northChannelOut(*outputChannel);
+        inputChannels->push_back(inputChannel);
     }
 
     if (isSouthDisconnected) {
-        channel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::South)).c_str());
-        router->southChannel(*channel);
-        channels->push_back(channel);
+        inputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::South) + "_Input").c_str());
+        outputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::South) + "_Output").c_str());
+        router->southChannelIn(*inputChannel);
+        router->southChannelOut(*outputChannel);
+        inputChannels->push_back(inputChannel);
+        outputChannels->push_back(outputChannel);
     }
 
     if (isEastDisconnected) {
-        channel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::East)).c_str());
-        router->eastChannel(*channel);
-        channels->push_back(channel);
+        inputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::East) + "_Input").c_str());
+        outputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::East) + "_Output").c_str());
+        router->eastChannelIn(*inputChannel);
+        router->eastChannelOut(*outputChannel);
+        inputChannels->push_back(inputChannel);
+        outputChannels->push_back(outputChannel);
     }
 
     if (isWestDisconnected) {
-        channel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::West)).c_str());
-        router->westChannel(*channel);
-        channels->push_back(channel);
+        inputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::West) + "_Input").c_str());
+        outputChannel = new RouterChannel(std::string(channelBaseName + std::to_string(Link::West) + "_Output").c_str());
+        router->westChannelIn(*inputChannel);
+        router->westChannelOut(*outputChannel);
+        inputChannels->push_back(inputChannel);
+        outputChannels->push_back(outputChannel);
     }
 }
 
-void assembleNoC(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerChannels)
+void assembleNoC(const std::vector<Router *> &routers, std::vector<RouterChannel *> &routerInputChannels,
+                 std::vector<RouterChannel *> &routerOutputChannels)
 {
     NoCDebug::printDebug(std::string("Topology"), NoCDebug::Assembly);
     for (unsigned i = 1; i < NOC_SIZE; i++) {
@@ -65,9 +83,11 @@ void assembleNoC(std::vector<Router *> &routers, std::vector<RouterChannel *> &r
             unsigned sourceA = i - 1;
             std::string routerChannelName("RouterChannel_");
             routerChannelName += std::to_string(sourceA) + "_" + std::to_string(i);
-            RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
-            connectRouters(*routers.at(sourceA), *routers.at(i), *channel, true);
-            routerChannels.push_back(channel);
+            RouterChannel *inputChannel = new RouterChannel(std::string(routerChannelName + "_Input").c_str());
+            RouterChannel *outputChannel = new RouterChannel(std::string(routerChannelName + "_Output").c_str());
+            connectRouters(*routers.at(sourceA), *routers.at(i), *inputChannel, *outputChannel, true);
+            routerInputChannels.push_back(inputChannel);
+            routerOutputChannels.push_back(outputChannel);
             NoCDebug::printDebug(std::string("> Connect R" + std::to_string(sourceA) + " to R" + std::to_string(i) + " from West"), NoCDebug::Assembly);
         }
 
@@ -79,26 +99,33 @@ void assembleNoC(std::vector<Router *> &routers, std::vector<RouterChannel *> &r
             unsigned sourceB = i - NOC_ROW_SIZE;
             std::string routerChannelName("RouterChannel_");
             routerChannelName += std::to_string(sourceB) + "_" + std::to_string(i);
-            RouterChannel *channel = new RouterChannel(routerChannelName.c_str());
-            connectRouters(*routers.at(sourceB), *routers.at(i), *channel, false);
-            routerChannels.push_back(channel);
+            RouterChannel *inputChannel = new RouterChannel(std::string(routerChannelName + "_Input").c_str());
+            RouterChannel *outputChannel = new RouterChannel(std::string(routerChannelName + "_Output").c_str());
+            connectRouters(*routers.at(sourceB), *routers.at(i), *inputChannel, *outputChannel, false);
+            routerInputChannels.push_back(inputChannel);
+            routerOutputChannels.push_back(outputChannel);
             NoCDebug::printDebug(std::string("> Connect R" + std::to_string(sourceB) + " to R" + std::to_string(i) + " from North"), NoCDebug::Assembly);
         }
     }
 }
 
-void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerChannels,
-                                 std::vector<NetworkInterface *> &networkInterfaces)
+void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerInputChannels,
+                          std::vector<RouterChannel *> &routerOutputChannels,
+                          std::vector<NetworkInterface *> &networkInterfaces)
 {
     NoCDebug::printDebug(std::string("Connect Straw Channels and NIs"), NoCDebug::Assembly);
     for (int i = 0; i < NOC_SIZE; i++) {
         Router *router = routers.at(i);
         NetworkInterface *ni = networkInterfaces.at(i);
-        RouterChannel *channel = new RouterChannel(std::string("RouterChannel_"
-                                                               + std::to_string(i) + "_" + std::to_string(i)).c_str());
-        router->localChannel(*channel);
-        ni->localChannel(*channel);
+        RouterChannel *inputChannel = new RouterChannel(std::string("RouterChannel_" + std::to_string(i) + "_" +
+                                                                     std::to_string(i) + "_Input").c_str());
+        RouterChannel *outputChannel = new RouterChannel(std::string("RouterChannel_" + std::to_string(i) + "_" +
+                                                                     std::to_string(i) + "_Output").c_str());
+        router->localChannelIn(*inputChannel);
+        ni->localChannelOut(*inputChannel);
+        router->localChannelOut(*outputChannel);
+        ni->localChannelIn(*outputChannel);
 
-        connectEmptyChannels(router, i, &routerChannels);
+        connectEmptyChannels(router, i, &routerInputChannels, &routerOutputChannels);
     }
 }

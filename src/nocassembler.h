@@ -14,7 +14,8 @@
  * \param channel The channel that will be used to connect both routers.
  * \param direction The direction of this connection. (Horizontal = true, Vertical = false)
  */
-void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &channel, bool direction);
+void connectRouters(Router &routerSource, Router &routerDestination, RouterChannel &inputChannel,
+                    RouterChannel &outputChannel, bool direction);
 
 /*!
  * \brief Connect the empty channels of a router, i.e., channels that were not connected before.
@@ -22,10 +23,12 @@ void connectRouters(Router &routerSource, Router &routerDestination, RouterChann
  * \param routerId  The identity of this router.
  * \param channels NoC's vector of channels.
  */
-void connectEmptyChannels(Router *router, int routerId, std::vector<RouterChannel *> *channels);
+void connectEmptyChannels(Router *router, int routerId, std::vector<RouterChannel *> *inputChannels,
+                          std::vector<RouterChannel *> *outputChannels);
 
-void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerChannels,
-                                 std::vector<NetworkInterface *> &networkInterfaces);
+void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerInputChannels,
+                          std::vector<RouterChannel *> &routerOutputChannels,
+                          std::vector<NetworkInterface *> &networkInterfaces);
 
 // Assemble NoC Topology
 //
@@ -44,6 +47,7 @@ void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChan
 //
 // New routers must be connected to their left-side and up-side routers
 // Should them exist and respecting the topology
-void assembleNoC(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerChannels);
+void assembleNoC(const std::vector<Router *> &routers, std::vector<RouterChannel *> &routerInputChannels,
+                 std::vector<RouterChannel *> &routerOutputChannels);
 
 #endif // NOCASSEMBLER_H

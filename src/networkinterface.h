@@ -74,7 +74,7 @@ class NetworkInterface : public sc_module
 
 public:
     // IO
-    sc_port<IRouterChannel> localChannel;
+    sc_port<IRouterChannel> localChannelIn, localChannelOut;
 
     /*!
      * \brief Constructor
