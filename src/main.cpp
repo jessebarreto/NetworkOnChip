@@ -31,18 +31,16 @@
               \\ ||                 \\ ||
            ====(r20)===r2021/r2120===(r21)===
                  ||                    ||
-
-
 */
 
+// User Libraries
 #include "noccommon.h"
 #include "nocdebug.h"
 
-#include "petestreceiver.h"
-#include "petestreceiverfrontend.h"
-#include "petestsender.h"
-#include "petestsenderfrontend.h"
-#include "channeltester.h"
+#include "router.h"
+#include "routerchannel.h"
+#include "networkinterface.h"
+#include "nocassembler.h"
 
 /*!
  * \brief Main Function
@@ -77,19 +75,19 @@ int sc_main(int argc, char *argv[])
     // Assemble NoC
     assembleNoC(routers, routerChannels);
 
-    connectStrayChannels(routers, routerChannels, networkInterfaces);
+//    connectStrayChannels(routers, routerChannels, networkInterfaces);
 
-    routingTest(0, 4); //OK
-    routingTest(1, 4); //OK
-    routingTest(0, 8); //OK
+//    routingTest(0, 4); //OK
+//    routingTest(1, 4); //OK
+//    routingTest(0, 8); //OK
 
-    routingTest(4, 0); //OK
-    routingTest(4, 1); //OK
-    routingTest(8, 0); //OK
+//    routingTest(4, 0); //OK
+//    routingTest(4, 1); //OK
+//    routingTest(8, 0); //OK
 
-    // Start Simulation
-    //std::cout << "Start NoC Simulation..." << std::endl;
-    //sc_start();
+//    // Start Simulation
+//    //std::cout << "Start NoC Simulation..." << std::endl;
+//    //sc_start();
 
-    return 0;
+//    return 0;
 }

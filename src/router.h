@@ -3,6 +3,8 @@
 
 #include <systemc.h>
 
+#include "noccommon.h"
+
 #include "irouterchannel.h"
 
 /*!
@@ -18,6 +20,11 @@ class Router : public sc_module
     const unsigned _routerId;
 
     /*!
+     * \brief Buffers used at each channel input.
+     */
+    std::vector<std::pair<sc_fifo<Flit *> *, int>> _inputBuffers;
+
+    /*!
      * \brief Threads to for each channel.
      */
     void _localChannelThread();
@@ -26,8 +33,20 @@ class Router : public sc_module
     void _eastChannelThread();
     void _westChannelThread();
 
+    /*!
+     * \brief Thread to the arbiter.
+     */
+    void _arbiterThread();
 
+    /*!
+     * \brief _routingMethod
+     * \param flit
+     * \param dst
+     */
     void _routingMethod(Flit *flit, int *dst);
+
+    void _initChannelBuffers();
+
 public:
     /*!
      * \brief Ports connections to communicate with other routers/NI.
@@ -44,6 +63,11 @@ public:
      * \param routerId The unique identifier to this router.
      */
     Router(sc_module_name name, unsigned routerId);
+
+    /*!
+     * \brief Router Destructor.
+     */
+    ~Router();
 
     /*!
      * \brief Getter to this router name.

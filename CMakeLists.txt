@@ -19,8 +19,8 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_AUTOMOC ON)
 
 # Find SystemC
-#set(SYSTEMC_HOME /opt/systemc-2.3.1a)
-set(SYSTEMC_HOME /usr/local/systemc-2.3.1/)
+set(SYSTEMC_HOME /opt/systemc-2.3.1a)
+#set(SYSTEMC_HOME /usr/local/systemc-2.3.1/)
 include_directories(SYSTEM "${SYSTEMC_HOME}/include")
 set(SYSTEMC_LIBRARIES ${SYSTEMC_HOME}/lib-linux64/libsystemc.a ${SYSTEMC_HOME}/lib-linux64/libsystemc-2.3.1.so)
 set (CMAKE_CXX_FLAGS "-pthread")
@@ -43,6 +43,8 @@ add_executable( NoC #Executable Binary
                 src/routerchannel.cpp
                 src/networkinterface.cpp
                 src/networkinterfacefrontendbase.cpp
+                src/nocassembler.cpp
+                src/nocrouting.cpp
                 include/noccommon.h #Include List
                 include/irouterchannel.h
                 include/inetworkinterfacefrontend.h
@@ -60,7 +62,8 @@ add_executable( NoCRouterChannelTester #Executable Binary
                 src/networkinterfacefrontendbase.cpp
                 test/petestsender.cpp # Test List
                 test/channeltester.cpp
-                include/noccommon.h #Include List
+                include/noccommon.cpp
+                #Include List
                 include/irouterchannel.h
                 include/inetworkinterfacefrontend.h
                 )
@@ -78,7 +81,8 @@ add_executable( NoCNetworkInterfaceTester #Executable Binary
                 test/petestsenderfrontend.cpp
                 test/petestreceiver.cpp
                 test/petestreceiverfrontend.cpp
-                include/noccommon.h #Include List
+                include/noccommon.cpp
+                #Include List
                 include/irouterchannel.h
                 include/inetworkinterfacefrontend.h
                )
@@ -111,7 +115,8 @@ add_executable( RouterTest #Executable Binary
                 test/mastershell.cpp
                 test/slave.cpp
                 test/slaveshell.cpp
-                include/noccommon.h #Include List
+                include/noccommon.cpp
+                #Include List
                 include/irouterchannel.h
                 include/inetworkinterfacefrontend.h
                 include/nocdebug.h
