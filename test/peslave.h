@@ -12,7 +12,7 @@ class ProcessorElementSlave : public sc_module
     void _threadRun();
 
 public:
-    ProcessorElementSlave(sc_module_name name);
+    ProcessorElementSlave(sc_module_name name, char letter);
 
     // IO
     sc_fifo_out<char> slaveOut;

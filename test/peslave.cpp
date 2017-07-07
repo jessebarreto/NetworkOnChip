@@ -2,7 +2,8 @@
 
 #include "nocdebug.h"
 
-ProcessorElementSlave::ProcessorElementSlave(sc_module_name name)
+ProcessorElementSlave::ProcessorElementSlave(sc_module_name name, char letter) :
+    _send(letter)
 {
     _send = 'A';
 

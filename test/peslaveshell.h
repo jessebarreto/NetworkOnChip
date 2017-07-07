@@ -3,7 +3,7 @@
 
 #include <systemc.h>
 
-#include <networkinterfacefrontendbase.h>
+#include "networkinterfacefrontendbase.h"
 
 class ProcessorElementSlaveShell : public sc_module, public NetworkInterfaceFrontEndBase
 {

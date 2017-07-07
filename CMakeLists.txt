@@ -51,6 +51,10 @@ file(GLOB testList test/channeltester.cpp
                    test/petestsender.cpp
                    test/petestreceiver.cpp
                    test/petestreceiverfrontend.cpp
+                   test/pemaster.cpp
+                   test/pemastershell.cpp
+                   test/peslave.cpp
+                   test/peslaveshell.cpp
                    test/master.cpp
                    test/slave.cpp
                    test/slaveshell.cpp
@@ -64,17 +68,6 @@ file(GLOB includeList include/noccommon.h
                       include/inetworkinterfacefrontend.h
                       )
 
-#Include PE list
-file(GLOB peList ipcores/pemaster.h
-                 ipcores/pemaster.cpp
-                 ipcores/pemastershell.h
-                 ipcores/pemastershell.cpp
-                 ipcores/peslave.h
-                 ipcores/peslave.cpp
-                 ipcores/peslaveshell.h
-                 ipcores/peslaveshell.cpp
-                 )
-
 # This Semester NoC
 # Compile Executable
 add_executable( NoC #Executable Binary
@@ -82,57 +75,58 @@ add_executable( NoC #Executable Binary
                 #Source List
                 ${sourceList}
                  # PE List
-                ${peList}
+                 # Test List
+                ${testList}
                 #Include List
                 ${includeList}
                 )
 target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
 
-# Compile Executable
-add_executable( NoCRouterChannelTester #Executable Binary
-                test/routerchanneltester.cpp
-                #Source List
-                ${sourceList}
-                 # Test List
-                ${testList}
-                #Include List
-                ${includeList}
-                )
-target_link_libraries(NoCRouterChannelTester ${SYSTEMC_LIBRARIES})
+## Compile Executable
+#add_executable( NoCRouterChannelTester #Executable Binary
+#                test/routerchanneltester.cpp
+#                #Source List
+#                ${sourceList}
+#                 # Test List
+#                ${testList}
+#                #Include List
+#                ${includeList}
+#                )
+#target_link_libraries(NoCRouterChannelTester ${SYSTEMC_LIBRARIES})
 
-# Compile Executable
-add_executable( NoCNetworkInterfaceTester #Executable Binary
-                test/networkinterfacetester.cpp #Source List
-                #Source List
-                ${sourceList}
-                 # Test List
-                ${testList}
-                #Include List
-                ${includeList}
-               )
-target_link_libraries(NoCNetworkInterfaceTester ${SYSTEMC_LIBRARIES})
+## Compile Executable
+#add_executable( NoCNetworkInterfaceTester #Executable Binary
+#                test/networkinterfacetester.cpp #Source List
+#                #Source List
+#                ${sourceList}
+#                 # Test List
+#                ${testList}
+#                #Include List
+#                ${includeList}
+#               )
+#target_link_libraries(NoCNetworkInterfaceTester ${SYSTEMC_LIBRARIES})
 
-# Compile Executable
-add_executable( BasicShellCommunicationTest #Executable Binary
-                test/basicshellscommunication.cpp
-                include/specialkernel.cpp
-                #Source List
-                ${sourceList}
-                 # Test List
-                ${testList}
-                #Include List
-                ${includeList}
-               )
-target_link_libraries(BasicShellCommunicationTest ${SYSTEMC_LIBRARIES})
+## Compile Executable
+#add_executable( BasicShellCommunicationTest #Executable Binary
+#                test/basicshellscommunication.cpp
+#                include/specialkernel.cpp
+#                #Source List
+#                ${sourceList}
+#                 # Test List
+#                ${testList}
+#                #Include List
+#                ${includeList}
+#               )
+#target_link_libraries(BasicShellCommunicationTest ${SYSTEMC_LIBRARIES})
 
-# Compile Executable
-add_executable( RouterTest #Executable Binary
-                test/routertester.cpp #Source List
-                #Source List
-                ${sourceList}
-                 # Test List
-                ${testList}
-                #Include List
-                ${includeList}
-               )
-target_link_libraries(RouterTest ${SYSTEMC_LIBRARIES})
+## Compile Executable
+#add_executable( RouterTest #Executable Binary
+#                test/routertester.cpp #Source List
+#                #Source List
+#                ${sourceList}
+#                 # Test List
+#                ${testList}
+#                #Include List
+#                ${includeList}
+#               )
+#target_link_libraries(RouterTest ${SYSTEMC_LIBRARIES})

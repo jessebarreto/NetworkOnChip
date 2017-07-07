@@ -1,4 +1,4 @@
-#include "slaveshell.h"
+#include "peslaveshell.h"
 
 #include "nocdebug.h"
 
