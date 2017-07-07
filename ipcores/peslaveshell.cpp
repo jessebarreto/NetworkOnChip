@@ -2,13 +2,13 @@
 
 #include "nocdebug.h"
 
-SlaveShell::SlaveShell(sc_module_name name) :
+ProcessorElementSlaveShell::ProcessorElementSlaveShell(sc_module_name name) :
     sc_module(name)
 {
     SC_THREAD(_threadRun);
 }
 
-void SlaveShell::_threadRun()
+void ProcessorElementSlaveShell::_threadRun()
 {
     int rec;
     char send;

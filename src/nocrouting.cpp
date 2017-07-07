@@ -84,11 +84,11 @@ routingInfo routingXY(unsigned source, unsigned dest)
 
             //Link Identification
             if (stepY > 0) {
-                NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::South)), NoCDebug::Router);
-                rXY.link = Link::South;
-            } else {
                 NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::North)), NoCDebug::Router);
                 rXY.link = Link::North;
+            } else {
+                NoCDebug::printDebug(std::string("Routing XY: Link " + std::to_string(Link::South)), NoCDebug::Router);
+                rXY.link = Link::South;
             }
 
         }
@@ -162,11 +162,11 @@ routingInfo routingYX(unsigned source, unsigned dest)
 
             //Link Identification
             if (stepY > 0) {
-                NoCDebug::printDebug(std::string("Routing YX: Link " + std::to_string(Link::South)), NoCDebug::Router);
-                rYX.link = Link::South;
-            } else {
                 NoCDebug::printDebug(std::string("Routing YX: Link " + std::to_string(Link::North)), NoCDebug::Router);
                 rYX.link = Link::North;
+            } else {
+                NoCDebug::printDebug(std::string("Routing YX: Link " + std::to_string(Link::South)), NoCDebug::Router);
+                rYX.link = Link::South;
             }
 
         }

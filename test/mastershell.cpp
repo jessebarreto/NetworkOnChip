@@ -5,6 +5,7 @@
 MasterShell::MasterShell(sc_module_name name) :
     sc_module(name)
 {
+    NoCDebug::printDebug(std::string("> Master"), NoCDebug::Assembly);
     SC_THREAD(_threadRun);
 }
 

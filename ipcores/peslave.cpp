@@ -1,15 +1,15 @@
-#include "slave.h"
+#include "peslave.h"
 
 #include "nocdebug.h"
 
-Slave::Slave(sc_module_name name)
+ProcessorElementSlave::ProcessorElementSlave(sc_module_name name)
 {
     _send = 'A';
 
     SC_THREAD(_threadRun);
 }
 
-void Slave::_threadRun()
+void ProcessorElementSlave::_threadRun()
 {
     for (;;) {
         int read = slaveIn.read();

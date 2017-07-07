@@ -4,7 +4,7 @@
 
 #include "nocdebug.h"
 
-Master::Master(sc_module_name name) : sc_module(name)
+ProcessorElementMaster::ProcessorElementMaster(sc_module_name name) : sc_module(name)
 {
     data = new int[5];
     data[0] = 1;
@@ -16,7 +16,7 @@ Master::Master(sc_module_name name) : sc_module(name)
     SC_THREAD(_threadRun)
 }
 
-void Master::_threadRun()
+void ProcessorElementMaster::_threadRun()
 {
     for (int cnt = 0;cnt < 5;cnt++) {
         NoCDebug::printDebug("Master -> MShell      DATA: " + std::to_string(data[cnt]), NoCDebug::PE);

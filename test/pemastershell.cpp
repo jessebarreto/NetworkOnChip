@@ -7,6 +7,8 @@ ProcessorElementMasterShell::ProcessorElementMasterShell(sc_module_name name, un
     _position(position),
     _slavePosition(slavePosition)
 {
+    NoCDebug::printDebug(std::string("> MasterShell: M" + std::to_string(position) + "S" + std::to_string(slavePosition)), NoCDebug::Assembly);
+
     SC_THREAD(_threadRun);
 }
 
@@ -16,21 +18,21 @@ void ProcessorElementMasterShell::_threadRun()
     char rec;
     for (;;) {
         // Writing
-        NoCDebug::printDebug("MShell <- Master", NoCDebug::NI);
+        NoCDebug::printDebug("M" + std::to_string(_position) + "S" + std::to_string(_slavePosition) + ": MShell <- Master", NoCDebug::NI);
         shellIn.read(send);
         std::vector<uint32_t> payload;
         payload.push_back(send);
         int payloadDst = _slavePosition;
-        NoCDebug::printDebug("MShell -> NIM", NoCDebug::NI);
+        NoCDebug::printDebug("M" + std::to_string(_position) + "S" + std::to_string(_slavePosition) + ": MShell -> NIM", NoCDebug::NI);
         sendPayload(payload, payloadDst);
         payload.clear();
 
         // Reading
         int payloadSrc;
-        NoCDebug::printDebug("MShell <- NIM", NoCDebug::NI);
+        NoCDebug::printDebug("M" + std::to_string(_position) + "S" + std::to_string(_slavePosition) + ": MShell <- NIM", NoCDebug::NI);
         receivePayload(payload, &payloadSrc);
         rec = payload.at(0);
-        NoCDebug::printDebug("MShell -> Master", NoCDebug::NI);
+        NoCDebug::printDebug("M" + std::to_string(_position) + "S" + std::to_string(_slavePosition) + ": MShell -> Master", NoCDebug::NI);
         shellOut.write(rec);
 
         // Só lê do Master

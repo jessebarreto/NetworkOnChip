@@ -9,10 +9,12 @@ class ProcessorElementMaster : public sc_module
 
     int *data;
 
+    unsigned _position, _slavePosition;
+
     void _threadRun();
 
 public:
-    ProcessorElementMaster(sc_module_name name);
+    ProcessorElementMaster(sc_module_name name, unsigned position, unsigned slavePosition);
 
     // IO
     sc_fifo_out<int> masterOut;
