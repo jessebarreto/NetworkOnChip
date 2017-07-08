@@ -62,7 +62,7 @@ void NetworkInterface::_threadWriteToShell()
             std::vector<uint32_t> sendMessage;
             _unpackMessage(&sourceId, &sendMessage);
 
-            if (sendMessage.size()) {
+            if (!sendMessage.size()) {
                 NoCDebug::printDebug("Payload read from channel is empty.", NoCDebug::NI, true);
             }
 
@@ -80,6 +80,7 @@ void NetworkInterface::_packMessage(unsigned destinationId, const std::vector<ui
     _sendPacket.clear();
     uint16_t packetSize = static_cast<uint16_t>(std::min(static_cast<size_t>(std::numeric_limits<uint16_t>::max()),
                                                          payload.size()));
+    NoCDebug::printDebug("NI-ID:" + std::to_string(_networkInterfaceId) + " " + std::to_string(packetSize) + " flits of data.", NoCDebug::NI);
     // Create Head Flit
     flit_t headerData = 0;
 
@@ -108,6 +109,7 @@ const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t>
     *sourceId = flit->getData().range(31, 24);
     payload->clear();
     uint16_t packetSize = flit->getData().range(15, 0);
+    NoCDebug::printDebug("NI-ID:" + std::to_string(_networkInterfaceId) + " " + std::to_string(packetSize) + " flits of data.", NoCDebug::NI);
     for (uint16_t flitIndex = 1; flitIndex <= packetSize; flitIndex++) {
         flit = _receivePacket.at(flitIndex);
         payload->push_back(flit->getData().to_uint());

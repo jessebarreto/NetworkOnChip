@@ -103,8 +103,8 @@ int main(int argc, char *argv[])
     slave1.slaveOut(slaveChar1);
     slaveShell1.shellIn(slaveChar1);
 
-    //ProcessorElementNull nullPE1("NullPE1", 1); ProcessorElementNullShell nullPEShell1("NullPEShell1", 1);
-    //connectProcessorElementToNoC(networkInterfaces, &nullPEShell1, 1);
+    ProcessorElementNull nullPE1("NullPE1", 1); ProcessorElementNullShell nullPEShell1("NullPEShell1", 1);
+    connectProcessorElementToNoC(networkInterfaces, &nullPEShell1, 1);
 
     ProcessorElementNull nullPE2("NullPE2", 2); ProcessorElementNullShell nullPEShell2("NullPEShell2", 2);
     connectProcessorElementToNoC(networkInterfaces, &nullPEShell2, 2);
@@ -112,9 +112,12 @@ int main(int argc, char *argv[])
     ProcessorElementNull nullPE3("NullPE3", 3); ProcessorElementNullShell nullPEShell3("NullPEShell3", 3);
     connectProcessorElementToNoC(networkInterfaces, &nullPEShell3, 3);
 
-    //ProcessorElementNull nullPE4("NullPE4", 4); ProcessorElementNullShell nullPEShell4("NullPEShell4", 4);
-    //connectProcessorElementToNoC(networkInterfaces, &nullPEShell4, 4);
+    ProcessorElementNull nullPE4("NullPE4", 4); ProcessorElementNullShell nullPEShell4("NullPEShell4", 4);
+    connectProcessorElementToNoC(networkInterfaces, &nullPEShell4, 4);
 
+
+    /*
+     *
     //#2
     ProcessorElementMaster masterPE2("MasterPE2", 4, 1); ProcessorElementMasterShell masterPEShell2("MasterPEShell2", 4, 1);
     connectProcessorElementToNoC(networkInterfaces, &masterPEShell2, 4);
@@ -133,9 +136,6 @@ int main(int argc, char *argv[])
     slave2.slaveIn(slaveInt2);
     slave2.slaveOut(slaveChar2);
     slaveShell2.shellIn(slaveChar2);
-
-
-    /*
 
     //#3
     ProcessorElementMaster masterPE3("MasterPE3", 4, 5); ProcessorElementMasterShell masterPEShell3("MasterPEShell3", 4, 5);

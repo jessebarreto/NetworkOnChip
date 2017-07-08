@@ -8,7 +8,6 @@ ProcessorElementSlave::ProcessorElementSlave(sc_module_name name, unsigned posit
     _send(letter)
 {
     NoCDebug::printDebug(std::string("> Slave: S" + std::to_string(_position) + "M" + std::to_string(_masterPosition)), NoCDebug::Assembly);
-    //_send = 'A';
     SC_THREAD(_threadRun);
 
 }

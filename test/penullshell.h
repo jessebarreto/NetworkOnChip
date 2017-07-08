@@ -9,8 +9,6 @@ class ProcessorElementNullShell : public sc_module, public NetworkInterfaceFront
 {
     SC_HAS_PROCESS(ProcessorElementNullShell);
 
-    void _threadRun();
-
     unsigned _position;
 
 public:
