@@ -116,7 +116,9 @@ void assembleNoC(const std::vector<Router *> &routers, std::vector<RouterChannel
 
 void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChannel *> &routerInputChannels,
                           std::vector<RouterChannel *> &routerOutputChannels,
-                          std::vector<NetworkInterface *> &networkInterfaces)
+                          std::vector<NetworkInterface *> &networkInterfaces,
+                          std::vector<ProcessorElementNull *> &processorElementsNull,
+                          std::vector<ProcessorElementNullShell *> &processorElementNullShells)
 {
     NoCDebug::printDebug(std::string("Connect Straw Channels and NIs:"), NoCDebug::Assembly);
     for (int i = 0; i < NOC_SIZE; i++) {
@@ -132,5 +134,76 @@ void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChan
         ni->localChannelIn(*outputChannel);
 
         connectEmptyChannels(router, i, &routerInputChannels, &routerOutputChannels);
+
+        // Connect Empty NI to Null PE
+        if (!ni->getFrontEndReference()) {
+            ProcessorElementNull *nullPE =
+                    new ProcessorElementNull(std::string("NullPE_" + std::to_string(processorElementsNull.size())).c_str(), i);
+            ProcessorElementNullShell *nullPEShell =
+                    new ProcessorElementNullShell(std::string("NullPEShell_" + std::to_string(processorElementNullShells.size())).c_str(), i);
+            processorElementsNull.push_back(nullPE);
+            processorElementNullShells.push_back(nullPEShell);
+            ni->connectFrontEnd(nullPEShell);
+        }
+    }
+}
+
+void connectMastersAndSlaves(const std::vector<NetworkInterface *> &networkInterfaces,
+                             std::vector<ProcessorElementMaster *> &processorElementMasters,
+                             std::vector<ProcessorElementMasterShell *> &processorElementMasterShells,
+                             std::vector<std::pair<sc_fifo<int> *, sc_fifo<char> *> > &masterConnections,
+                             std::vector<ProcessorElementSlave *> &processorElementSlaves,
+                             std::vector<ProcessorElementSlaveShell *> &processorElementSlaveShells,
+                             std::vector<std::pair<sc_fifo<int> *, sc_fifo<char> *> > &slaveConnections,
+                             const std::vector<int> &masterPositions,
+                             const std::vector<int> &slavePositions,
+                             int numberOfPairs,
+                             char *initialSlaveChar)
+{
+    for (int i = 0; i < numberOfPairs; i++) {
+        ProcessorElementMaster *master =
+                new ProcessorElementMaster(std::string("Master_" + std::to_string(i)).c_str(),
+                                           masterPositions.at(i),
+                                           slavePositions.at(i));
+        ProcessorElementMasterShell *masterShell =
+                new ProcessorElementMasterShell(std::string("MasterShell_" + std::to_string(i)).c_str(),
+                                                masterPositions.at(i),
+                                                slavePositions.at(i));
+        sc_fifo<int> *fifoMasterInt = new sc_fifo<int>();
+        sc_fifo<char> *fifoMasterChar = new sc_fifo<char>();
+
+        master->masterOut(*fifoMasterInt);
+        masterShell->shellIn(*fifoMasterInt);
+        masterShell->shellOut(*fifoMasterChar);
+        master->masterIn(*fifoMasterChar);
+
+        // Connect Front-End to NetworkInterface
+        networkInterfaces.at(masterPositions.at(i))->connectFrontEnd(masterShell);
+        processorElementMasters.push_back(master);
+        processorElementMasterShells.push_back(masterShell);
+        masterConnections.push_back(std::make_pair(fifoMasterInt, fifoMasterChar));
+
+        ProcessorElementSlave *slave =
+                new ProcessorElementSlave(std::string("Slave_" + std::to_string(processorElementSlaves.size())).c_str(),
+                                           slavePositions.at(processorElementSlaves.size()),
+                                           masterPositions.at(processorElementSlaves.size()), *initialSlaveChar);
+        ProcessorElementSlaveShell *slaveShell =
+                new ProcessorElementSlaveShell(std::string("SlaveShell_" + std::to_string(processorElementSlaveShells.size())).c_str(),
+                                                slavePositions.at(processorElementSlaveShells.size()),
+                                                masterPositions.at(processorElementSlaveShells.size()));
+        *initialSlaveChar += 5;
+        sc_fifo<int> *fifoSlaveInt = new sc_fifo<int>();
+        sc_fifo<char> *fifoSlaveChar = new sc_fifo<char>();
+
+        slaveShell->shellOut(*fifoSlaveInt);
+        slave->slaveIn(*fifoSlaveInt);
+        slave->slaveOut(*fifoSlaveChar);
+        slaveShell->shellIn(*fifoSlaveChar);
+
+        // Connect Front-End to NetworkInterface
+        networkInterfaces.at(slavePositions.at(i))->connectFrontEnd(slaveShell);
+        processorElementSlaves.push_back(slave);
+        processorElementSlaveShells.push_back(slaveShell);
+        slaveConnections.push_back(std::make_pair(fifoSlaveInt, fifoSlaveChar));
     }
 }

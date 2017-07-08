@@ -26,7 +26,7 @@ const unsigned NOC_ROUTER_BUFFER_SIZE = 32; // Number of Flits of a router chann
 const unsigned NOC_ROUTER_ROUND_ROBIN_SIZE = 3; // Number of Flits sent by the arbiter before it preemptively changes.
 
 // NoC Topology Characteristics
-const unsigned NOC_SIZE = 6; // Number of Processor Elements
+const unsigned NOC_SIZE = 16; // Number of Processor Elements
 const unsigned NOC_ROW_SIZE = 2; // Number of PE per row
 
 // Link Type

@@ -1,0 +1,12 @@
+ch.hsr.ifs.cute.charwars.problems.ArrayProblem=-Warning
+ch.hsr.ifs.cute.charwars.problems.CStrProblem=-Warning
+ch.hsr.ifs.cute.charwars.problems.CStringAliasProblem=-Warning
+ch.hsr.ifs.cute.charwars.problems.CStringCleanupProblem=-Warning
+ch.hsr.ifs.cute.charwars.problems.CStringParameterProblem=-Warning
+ch.hsr.ifs.cute.charwars.problems.CStringProblem=-Warning
+ch.hsr.ifs.cute.charwars.problems.PointerParameterProblem=-Warning
+ch.hsr.ifs.elevator.defaultctor=Warning
+ch.hsr.ifs.elevator.nullMacro=Warning
+ch.hsr.ifs.elevator.uninitialized=Warning
+eclipse.preferences.version=1
+useParentScope=false

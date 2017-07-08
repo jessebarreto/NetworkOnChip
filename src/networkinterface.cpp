@@ -11,6 +11,11 @@ NetworkInterface::NetworkInterface(sc_module_name name, unsigned id) :
     SC_THREAD(_threadWriteToShell);
 }
 
+INetworkInterfaceFrontEnd *NetworkInterface::getFrontEndReference()
+{
+    return _frontEnd;
+}
+
 void NetworkInterface::connectFrontEnd(INetworkInterfaceFrontEnd *networkInterfaceFrontEnd)
 {
     _frontEnd = networkInterfaceFrontEnd;

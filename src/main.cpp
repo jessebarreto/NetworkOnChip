@@ -81,84 +81,28 @@ int main(int argc, char *argv[])
 
     /////////////////////////////////////////////////////////////////////////////
     // Processor Elements Connections
-
-
     NoCDebug::printDebug(std::string("Adding PE Connections:"), NoCDebug::Assembly);
+    std::vector<int> masterPositions = {0, 2, 4, 6};
+    std::vector<int> slavePositions = {5, 3, 1, 15};
+    int numberOfPairs = 4;
 
-    //#1
-    ProcessorElementMaster masterPE1("MasterPE1"); ProcessorElementMasterShell masterPEShell1("MasterPEShell1", 5);
-    connectProcessorElementToNoC(networkInterfaces, &masterPEShell1, 0);
-    sc_fifo<int> masterIntFifo1(16);
-    sc_fifo<char> masterCharFifo1(16);
-    masterPE1.masterOut(masterIntFifo1);
-    masterPEShell1.shellIn(masterIntFifo1);
-    masterPE1.masterIn(masterCharFifo1);
-    masterPEShell1.shellOut(masterCharFifo1);
+    std::vector<std::pair<sc_fifo<int> *, sc_fifo<char> *>> masterConnections;
+    std::vector<std::pair<sc_fifo<int> *, sc_fifo<char> *>> slaveConnections;
 
-    ProcessorElementSlave slave1("PESlave1", 'A'); ProcessorElementSlaveShell slaveShell1("SlaveShell1", 0);
-    connectProcessorElementToNoC(networkInterfaces, &slaveShell1, 5);
-    sc_fifo<int> slaveInt1(2);
-    sc_fifo<char> slaveChar1(2);
-    slaveShell1.shellOut(slaveInt1);
-    slave1.slaveIn(slaveInt1);
-    slave1.slaveOut(slaveChar1);
-    slaveShell1.shellIn(slaveChar1);
+    std::vector<ProcessorElementMaster *> processorMasterElements;
+    std::vector<ProcessorElementMasterShell *> processorMasterElementShells;
 
-    ProcessorElementNull nullPE1("NullPE1"); ProcessorElementNullShell nullPEShell1("NullPEShell1");
-    connectProcessorElementToNoC(networkInterfaces, &nullPEShell1, 1);
+    std::vector<ProcessorElementSlave *> processorSlaveElements;
+    std::vector<ProcessorElementSlaveShell *> processorSlaveElementShells;
 
-    ProcessorElementNull nullPE2("NullPE2"); ProcessorElementNullShell nullPEShell2("NullPEShell2");
-    connectProcessorElementToNoC(networkInterfaces, &nullPEShell2, 2);
+    char initialChar = 'A';
+    connectMastersAndSlaves(networkInterfaces, processorMasterElements, processorMasterElementShells, masterConnections,
+                            processorSlaveElements, processorSlaveElementShells, slaveConnections,
+                            masterPositions, slavePositions, numberOfPairs, &initialChar);
 
-    ProcessorElementNull nullPE3("NullPE3"); ProcessorElementNullShell nullPEShell3("NullPEShell3");
-    connectProcessorElementToNoC(networkInterfaces, &nullPEShell3, 3);
-
-    ProcessorElementNull nullPE4("NullPE4"); ProcessorElementNullShell nullPEShell4("NullPEShell4");
-    connectProcessorElementToNoC(networkInterfaces, &nullPEShell4, 4);
-
-
-    /*
-     *
-    //#2
-    ProcessorElementMaster masterPE2("MasterPE2", 4, 1); ProcessorElementMasterShell masterPEShell2("MasterPEShell2", 4, 1);
-    connectProcessorElementToNoC(networkInterfaces, &masterPEShell2, 4);
-    sc_fifo<int> masterIntFifo2(16);
-    sc_fifo<char> masterCharFifo2(16);
-    masterPE2.masterOut(masterIntFifo2);
-    masterPEShell2.shellIn(masterIntFifo2);
-    masterPE2.masterIn(masterCharFifo2);
-    masterPEShell2.shellOut(masterCharFifo2);
-
-    ProcessorElementSlave slave2("PESlave2", 1, 4, 'J'); ProcessorElementSlaveShell slaveShell2("SlaveShell2", 1, 4);
-    connectProcessorElementToNoC(networkInterfaces, &slaveShell2, 1);
-    sc_fifo<int> slaveInt2(2);
-    sc_fifo<char> slaveChar2(2);
-    slaveShell2.shellOut(slaveInt2);
-    slave2.slaveIn(slaveInt2);
-    slave2.slaveOut(slaveChar2);
-    slaveShell2.shellIn(slaveChar2);
-
-    //#3
-    ProcessorElementMaster masterPE3("MasterPE3", 4, 5); ProcessorElementMasterShell masterPEShell3("MasterPEShell3", 4, 5);
-    connectProcessorElementToNoC(networkInterfaces, &masterPEShell3, 4);
-    sc_fifo<int> masterIntFifo3(16);
-    sc_fifo<char> masterCharFifo3(16);
-    masterPE3.masterOut(masterIntFifo3);
-    masterPEShell3.shellIn(masterIntFifo3);
-    masterPE3.masterIn(masterCharFifo3);
-    masterPEShell3.shellOut(masterCharFifo3);
-
-    ProcessorElementSlave slave3("PESlave3", 5, 4, 'T'); ProcessorElementSlaveShell slaveShell3("SlaveShell3", 5, 4);
-    connectProcessorElementToNoC(networkInterfaces, &slaveShell3, 5);
-    sc_fifo<int> slaveInt3(2);
-    sc_fifo<char> slaveChar3(2);
-    slaveShell3.shellOut(slaveInt3);
-    slave3.slaveIn(slaveInt3);
-    slave3.slaveOut(slaveChar3);
-    slaveShell3.shellIn(slaveChar3);
-
-    */
-
+    // Vector of Null Processor Elements
+    std::vector<ProcessorElementNull *> processorNullElements;
+    std::vector<ProcessorElementNullShell *> processorNullElementShell;
     /////////////////////////////////////////////////////////////////////////////
 
     // Channels or Links
@@ -168,7 +112,8 @@ int main(int argc, char *argv[])
     assembleNoC(routers, routerInputChannels, routerOutputChannels);
 
     // Stray Channels to the routers
-    connectStrayChannels(routers, routerInputChannels, routerOutputChannels, networkInterfaces);
+    connectStrayChannels(routers, routerInputChannels, routerOutputChannels, networkInterfaces,
+                         processorNullElements, processorNullElementShell);
 
     // Start Simulation
     std::cout << "Start NoC Simulation..." << std::endl;

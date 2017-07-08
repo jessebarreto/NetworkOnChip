@@ -19,8 +19,8 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_AUTOMOC ON)
 
 # Find SystemC
-#set(SYSTEMC_HOME /opt/systemc-2.3.1a)
-set(SYSTEMC_HOME /usr/local/systemc-2.3.1/)
+set(SYSTEMC_HOME /opt/systemc-2.3.1a)
+#set(SYSTEMC_HOME /usr/local/systemc-2.3.1/)
 include_directories(SYSTEM "${SYSTEMC_HOME}/include")
 set(SYSTEMC_LIBRARIES ${SYSTEMC_HOME}/lib-linux64/libsystemc.a ${SYSTEMC_HOME}/lib-linux64/libsystemc-2.3.1.so)
 set (CMAKE_CXX_FLAGS "-pthread")
@@ -43,6 +43,18 @@ file(GLOB sourceList src/flit.cpp
                      src/networkinterfacefrontendbase.cpp
                      src/nocassembler.cpp
                      src/nocrouting.cpp
+                     src/pemaster.cpp
+                     src/pemaster.h
+                     src/peslave.cpp
+                     src/peslave.h
+                     src/pemastershell.cpp
+                     src/pemastershell.h
+                     src/peslaveshell.cpp
+                     src/peslaveshell.h
+                     src/penull.cpp
+                     src/penull.h
+                     src/penullshell.cpp
+                     src/penullshell.h
                      )
 
 # Test files list
@@ -51,12 +63,6 @@ file(GLOB testList test/channeltester.cpp
                    test/petestsender.cpp
                    test/petestreceiver.cpp
                    test/petestreceiverfrontend.cpp
-                   test/pemaster.cpp
-                   test/pemastershell.cpp
-                   test/peslave.cpp
-                   test/peslaveshell.cpp
-                   test/penull.cpp
-                   test/penullshell.cpp
                    test/master.cpp
                    test/slave.cpp
                    test/slaveshell.cpp

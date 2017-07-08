@@ -84,6 +84,11 @@ public:
     NetworkInterface(sc_module_name name, unsigned id);
 
     /*!
+     * \brief Getter to the front-end reference.
+     */
+    INetworkInterfaceFrontEnd *getFrontEndReference();
+
+    /*!
      * \brief This method is used to connect a shell to the kernel.
      * \param networkInterfaceFrontEnd A reference of to the shell module.
      */

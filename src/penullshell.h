@@ -9,10 +9,13 @@ class ProcessorElementNullShell : public sc_module, public NetworkInterfaceFront
 {
     SC_HAS_PROCESS(ProcessorElementNullShell);
 
-    std::string _name;
+    /*!
+     * \brief Position of the PE in the NoC.
+     */
+    unsigned _position;
 
 public:
-    ProcessorElementNullShell(sc_module_name name);
+    ProcessorElementNullShell(sc_module_name name, unsigned position);
 };
 
 #endif // PENULLSHELL_H
