@@ -11,7 +11,7 @@ class ProcessorElementMasterShell : public sc_module, public NetworkInterfaceFro
 
     void _threadRun();
 
-    unsigned _position, _slavePosition;
+    unsigned _slavePosition;
     std::string _name;
 
 public:
