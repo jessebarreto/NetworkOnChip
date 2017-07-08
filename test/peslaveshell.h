@@ -11,14 +11,15 @@ class ProcessorElementSlaveShell : public sc_module, public NetworkInterfaceFron
 
     void _threadRun();
 
-    unsigned _position, _masterPosition;
+    unsigned _masterPosition;
+    std::string _name;
 
 public:
     // IO
     sc_fifo_in<char> shellIn;
     sc_fifo_out<int> shellOut;
 
-    ProcessorElementSlaveShell(sc_module_name name, unsigned position, unsigned masterPosition);
+    ProcessorElementSlaveShell(sc_module_name name, unsigned masterPosition);
 };
 
 #endif // PESLAVESHELL_H

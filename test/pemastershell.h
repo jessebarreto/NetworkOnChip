@@ -12,13 +12,14 @@ class ProcessorElementMasterShell : public sc_module, public NetworkInterfaceFro
     void _threadRun();
 
     unsigned _position, _slavePosition;
+    std::string _name;
 
 public:
     // IO
     sc_fifo_in<int> shellIn;
     sc_fifo_out<char> shellOut;
 
-    ProcessorElementMasterShell(sc_module_name name, unsigned position, unsigned slavePosition);
+    ProcessorElementMasterShell(sc_module_name name, unsigned slavePosition);
 };
 
 #endif // PEMASTERSHELL_H

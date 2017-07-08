@@ -2,8 +2,8 @@
 
 #include "nocdebug.h"
 
-ProcessorElementNull::ProcessorElementNull(sc_module_name name, unsigned position) :
-    _position(position)
+ProcessorElementNull::ProcessorElementNull(sc_module_name name)
 {
-    NoCDebug::printDebug(std::string("> Null: N" + std::to_string(_position)), NoCDebug::Assembly);
+    _name = this->basename();
+    NoCDebug::printDebug(std::string("> Null: " + _name), NoCDebug::Assembly);
 }

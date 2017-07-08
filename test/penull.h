@@ -6,13 +6,9 @@
 class ProcessorElementNull : public sc_module
 {
     SC_HAS_PROCESS(ProcessorElementNull);
-
-    unsigned _position;
-
-    void _threadRun();
-
+    std::string _name;
 public:
-    ProcessorElementNull(sc_module_name name, unsigned position);
+    ProcessorElementNull(sc_module_name name);
 };
 
 #endif // PENULL_H

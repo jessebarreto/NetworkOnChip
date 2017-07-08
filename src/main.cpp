@@ -84,8 +84,9 @@ int main(int argc, char *argv[])
 
 
     NoCDebug::printDebug(std::string("Adding PE Connections:"), NoCDebug::Assembly);
+
     //#1
-    ProcessorElementMaster masterPE1("MasterPE1", 0, 5); ProcessorElementMasterShell masterPEShell1("MasterPEShell1", 0, 5);
+    ProcessorElementMaster masterPE1("MasterPE1"); ProcessorElementMasterShell masterPEShell1("MasterPEShell1", 5);
     connectProcessorElementToNoC(networkInterfaces, &masterPEShell1, 0);
     sc_fifo<int> masterIntFifo1(16);
     sc_fifo<char> masterCharFifo1(16);
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
     masterPE1.masterIn(masterCharFifo1);
     masterPEShell1.shellOut(masterCharFifo1);
 
-    ProcessorElementSlave slave1("PESlave1", 5, 0, 'A'); ProcessorElementSlaveShell slaveShell1("SlaveShell1", 5, 0);
+    ProcessorElementSlave slave1("PESlave1", 'A'); ProcessorElementSlaveShell slaveShell1("SlaveShell1", 0);
     connectProcessorElementToNoC(networkInterfaces, &slaveShell1, 5);
     sc_fifo<int> slaveInt1(2);
     sc_fifo<char> slaveChar1(2);
@@ -103,16 +104,16 @@ int main(int argc, char *argv[])
     slave1.slaveOut(slaveChar1);
     slaveShell1.shellIn(slaveChar1);
 
-    ProcessorElementNull nullPE1("NullPE1", 1); ProcessorElementNullShell nullPEShell1("NullPEShell1", 1);
+    ProcessorElementNull nullPE1("NullPE1"); ProcessorElementNullShell nullPEShell1("NullPEShell1");
     connectProcessorElementToNoC(networkInterfaces, &nullPEShell1, 1);
 
-    ProcessorElementNull nullPE2("NullPE2", 2); ProcessorElementNullShell nullPEShell2("NullPEShell2", 2);
+    ProcessorElementNull nullPE2("NullPE2"); ProcessorElementNullShell nullPEShell2("NullPEShell2");
     connectProcessorElementToNoC(networkInterfaces, &nullPEShell2, 2);
 
-    ProcessorElementNull nullPE3("NullPE3", 3); ProcessorElementNullShell nullPEShell3("NullPEShell3", 3);
+    ProcessorElementNull nullPE3("NullPE3"); ProcessorElementNullShell nullPEShell3("NullPEShell3");
     connectProcessorElementToNoC(networkInterfaces, &nullPEShell3, 3);
 
-    ProcessorElementNull nullPE4("NullPE4", 4); ProcessorElementNullShell nullPEShell4("NullPEShell4", 4);
+    ProcessorElementNull nullPE4("NullPE4"); ProcessorElementNullShell nullPEShell4("NullPEShell4");
     connectProcessorElementToNoC(networkInterfaces, &nullPEShell4, 4);
 
 

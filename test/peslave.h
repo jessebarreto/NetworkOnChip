@@ -8,13 +8,11 @@ class ProcessorElementSlave : public sc_module
     SC_HAS_PROCESS(ProcessorElementSlave);
 
     char _send;
-
-    unsigned _position, _masterPosition;
-
+    std::string _name;
     void _threadRun();
 
 public:
-    ProcessorElementSlave(sc_module_name name, unsigned position, unsigned masterPosition, char letter);
+    ProcessorElementSlave(sc_module_name name, char letter);
 
     // IO
     sc_fifo_out<char> slaveOut;

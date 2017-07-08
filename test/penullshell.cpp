@@ -2,9 +2,9 @@
 
 #include "nocdebug.h"
 
-ProcessorElementNullShell::ProcessorElementNullShell(sc_module_name name, unsigned position) :
-    sc_module(name),
-    _position(position)
+ProcessorElementNullShell::ProcessorElementNullShell(sc_module_name name) :
+    sc_module(name)
 {
-    NoCDebug::printDebug(std::string("> NullShell: N" + std::to_string(position)), NoCDebug::Assembly);
+    _name = this->basename();
+    NoCDebug::printDebug(std::string("> NullShell: " + _name), NoCDebug::Assembly);
 }
