@@ -11,6 +11,11 @@ NetworkInterface::NetworkInterface(sc_module_name name, unsigned id) :
     SC_THREAD(_threadWriteToShell);
 }
 
+INetworkInterfaceFrontEnd *NetworkInterface::getFrontEndReference()
+{
+    return _frontEnd;
+}
+
 void NetworkInterface::connectFrontEnd(INetworkInterfaceFrontEnd *networkInterfaceFrontEnd)
 {
     _frontEnd = networkInterfaceFrontEnd;
@@ -28,12 +33,16 @@ void NetworkInterface::_threadReadFromShell()
             int destinationId;
             _frontEnd->kernelReceivePayload(receivedMessage, &destinationId);
 
+            _keyThread.lock();
+
             // Packet Message
             _packMessage(destinationId, receivedMessage);
             receivedMessage.clear();
 
             // Send to Router
             _sendToRouter();
+
+            _keyThread.unlock();
         }
     }
 }
@@ -48,6 +57,8 @@ void NetworkInterface::_threadWriteToShell()
             // Receive from front-end it's reading status
             _frontEnd->kernelGetFrontEndReadingStatus();
 
+            _keyThread.lock();
+
             // Receive from router
             _receiveFromRouter();
 
@@ -56,12 +67,14 @@ void NetworkInterface::_threadWriteToShell()
             std::vector<uint32_t> sendMessage;
             _unpackMessage(&sourceId, &sendMessage);
 
-            if (sendMessage.size()) {
+            if (!sendMessage.size()) {
                 NoCDebug::printDebug("Payload read from channel is empty.", NoCDebug::NI, true);
             }
 
             // Send Message to front-End
             _frontEnd->kernelSendPayload(sendMessage, &sourceId);
+
+            _keyThread.unlock();
         }
     }
 }
@@ -72,6 +85,7 @@ void NetworkInterface::_packMessage(unsigned destinationId, const std::vector<ui
     _sendPacket.clear();
     uint16_t packetSize = static_cast<uint16_t>(std::min(static_cast<size_t>(std::numeric_limits<uint16_t>::max()),
                                                          payload.size()));
+    NoCDebug::printDebug("NI-ID:" + std::to_string(_networkInterfaceId) + " " + std::to_string(packetSize) + " flits of data.", NoCDebug::NI);
     // Create Head Flit
     flit_t headerData = 0;
 
@@ -100,6 +114,7 @@ const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t>
     *sourceId = flit->getData().range(31, 24);
     payload->clear();
     uint16_t packetSize = flit->getData().range(15, 0);
+    NoCDebug::printDebug("NI-ID:" + std::to_string(_networkInterfaceId) + " " + std::to_string(packetSize) + " flits of data.", NoCDebug::NI);
     for (uint16_t flitIndex = 1; flitIndex <= packetSize; flitIndex++) {
         flit = _receivePacket.at(flitIndex);
         payload->push_back(flit->getData().to_uint());
@@ -117,7 +132,7 @@ const void NetworkInterface::_unpackMessage(int *sourceId, std::vector<uint32_t>
 void NetworkInterface::_sendToRouter()
 {
     for (Flit *flit : _sendPacket) {
-        localChannel->sendFlit(flit);
+        localChannelOut->sendFlit(flit);
     }
 
     // Clear Send Packet
@@ -129,16 +144,13 @@ void NetworkInterface::_receiveFromRouter()
     _receivePacket.clear();
     Flit *flit;
     // Receive Header Flit
-    flit = localChannel->receiveFlit();
-    if (flit->getUniqueId() == 2) {
-        std::cout << "Debug!" << std::endl;
-    }
+    flit = localChannelIn->receiveFlit();
     _receivePacket.push_back(flit);
 
     // Receive Tail Flits
     uint16_t packetSize = flit->getData().range(15, 0);
     for (uint16_t flitIndex = 0; flitIndex < packetSize; flitIndex++) {
-        flit = localChannel->receiveFlit();
+        flit = localChannelIn->receiveFlit();
         _receivePacket.push_back(flit);
     }
 }

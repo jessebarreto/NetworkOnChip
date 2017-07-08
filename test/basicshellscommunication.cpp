@@ -32,14 +32,6 @@ int main()
     multKernel.connectMaster(&masterShell);
     multKernel.connectSlave(&slaveShell);
 
-    // Connection Test
-//    sc_fifo<int> fifoInt;
-//    sc_fifo<char> fifoChar;
-//    master.masterOut(fifoInt);
-//    slave.slaveIn(fifoInt);
-//    slave.slaveOut(fifoChar);
-//    master.masterIn(fifoChar);
-
     sc_start(sc_time(100, SC_SEC),  SC_RUN_TO_TIME);
     return 0;
 }

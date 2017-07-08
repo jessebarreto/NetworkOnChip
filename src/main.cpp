@@ -31,23 +31,33 @@
               \\ ||                 \\ ||
            ====(r20)===r2021/r2120===(r21)===
                  ||                    ||
-
-
 */
 
+// User Libraries
 #include "noccommon.h"
 #include "nocdebug.h"
 
-#include "petestreceiver.h"
-#include "petestreceiverfrontend.h"
-#include "petestsender.h"
-#include "petestsenderfrontend.h"
-#include "channeltester.h"
+#include "router.h"
+#include "routerchannel.h"
+#include "networkinterface.h"
+#include "networkinterfacefrontendbase.h"
+#include "nocassembler.h"
+#include "nocrouting.h"
 
+// PE Includes
+#include "pemaster.h"
+#include "pemastershell.h"
+#include "peslave.h"
+#include "peslaveshell.h"
+#include "penull.h"
+#include "penullshell.h"
+
+void connectProcessorElementToNoC(const std::vector<NetworkInterface *> &networkInterfaces,
+                                  NetworkInterfaceFrontEndBase *shell, int position);
 /*!
  * \brief Main Function
  */
-int sc_main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     // Routers
     NoCDebug::printDebug(std::string("Adding Routers:"), NoCDebug::Assembly);
@@ -69,27 +79,51 @@ int sc_main(int argc, char *argv[])
         NoCDebug::printDebug(std::string("> " + niName), NoCDebug::Assembly);
     }
 
+    /////////////////////////////////////////////////////////////////////////////
     // Processor Elements Connections
+    NoCDebug::printDebug(std::string("Adding PE Connections:"), NoCDebug::Assembly);
+    std::vector<int> masterPositions = {0, 2, 4, 6};
+    std::vector<int> slavePositions = {5, 3, 1, 15};
+    int numberOfPairs = 4;
+
+    std::vector<std::pair<sc_fifo<int> *, sc_fifo<char> *>> masterConnections;
+    std::vector<std::pair<sc_fifo<int> *, sc_fifo<char> *>> slaveConnections;
+
+    std::vector<ProcessorElementMaster *> processorMasterElements;
+    std::vector<ProcessorElementMasterShell *> processorMasterElementShells;
+
+    std::vector<ProcessorElementSlave *> processorSlaveElements;
+    std::vector<ProcessorElementSlaveShell *> processorSlaveElementShells;
+
+    char initialChar = 'A';
+    connectMastersAndSlaves(networkInterfaces, processorMasterElements, processorMasterElementShells, masterConnections,
+                            processorSlaveElements, processorSlaveElementShells, slaveConnections,
+                            masterPositions, slavePositions, numberOfPairs, &initialChar);
+
+    // Vector of Null Processor Elements
+    std::vector<ProcessorElementNull *> processorNullElements;
+    std::vector<ProcessorElementNullShell *> processorNullElementShell;
+    /////////////////////////////////////////////////////////////////////////////
 
     // Channels or Links
-    std::vector<RouterChannel *> routerChannels;
+    std::vector<RouterChannel *> routerInputChannels, routerOutputChannels;
 
     // Assemble NoC
-    assembleNoC(routers, routerChannels);
+    assembleNoC(routers, routerInputChannels, routerOutputChannels);
 
-    connectStrayChannels(routers, routerChannels, networkInterfaces);
-
-    routingTest(0, 4); //OK
-    routingTest(1, 4); //OK
-    routingTest(0, 8); //OK
-
-    routingTest(4, 0); //OK
-    routingTest(4, 1); //OK
-    routingTest(8, 0); //OK
+    // Stray Channels to the routers
+    connectStrayChannels(routers, routerInputChannels, routerOutputChannels, networkInterfaces,
+                         processorNullElements, processorNullElementShell);
 
     // Start Simulation
-    //std::cout << "Start NoC Simulation..." << std::endl;
-    //sc_start();
+    std::cout << "Start NoC Simulation..." << std::endl;
+    sc_start();
 
     return 0;
+}
+
+void connectProcessorElementToNoC(const std::vector<NetworkInterface *> &networkInterfaces,
+                                  NetworkInterfaceFrontEndBase *shell, int position)
+{
+    networkInterfaces.at(position)->connectFrontEnd(shell);
 }

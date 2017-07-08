@@ -14,8 +14,10 @@ The NoC Router will have the following characteristics:
  * Routing - Using XY-Algorithm.
  * Switching Scheme - Wormhole Switching.
  * Flow Control - Handshaking Signal based.
- * Arbiter Scheme - FCFS (First Come First Serve).
+ * Arbiter Scheme - Round-Robin Algorithm. \*
  * Using VC (Virtual Channel)
+
+\*As a development decision the arbiter scheme changed from FCFS (First Come First Serve).
 
 The messages will be divide in packets with N-flits with 32-bits depth. The first flit will be used as header
 to allocate network resources to be used by the following data flits.
@@ -24,7 +26,7 @@ The Header flit will divided as:
 
 \------------------------------------------------------------------------------------------
 
-\| source ID (8 bits) | destiny ID (8 bits) |                       packet size (16 bits) |
+\| source ID (8 bits) | destination ID (8 bits) |                       packet size (16 bits) |
 
 \------------------------------------------------------------------------------------------
 

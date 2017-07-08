@@ -35,6 +35,8 @@ class NetworkInterface : public sc_module
      */
     std::vector<Flit *> _receivePacket;
 
+    sc_mutex _keyThread;
+
     /*!
      * \brief Thread to read data from the shell.
      */
@@ -72,7 +74,7 @@ class NetworkInterface : public sc_module
 
 public:
     // IO
-    sc_port<IRouterChannel> localChannel;
+    sc_port<IRouterChannel> localChannelIn, localChannelOut;
 
     /*!
      * \brief Constructor
@@ -80,6 +82,11 @@ public:
      * \param id the identification number of this module.
      */
     NetworkInterface(sc_module_name name, unsigned id);
+
+    /*!
+     * \brief Getter to the front-end reference.
+     */
+    INetworkInterfaceFrontEnd *getFrontEndReference();
 
     /*!
      * \brief This method is used to connect a shell to the kernel.
