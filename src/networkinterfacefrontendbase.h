@@ -1,3 +1,17 @@
+/******************************************************************************************
+ * Universidade de Brasília – UnB
+ * Instituto de Ciências Exatas – IE
+ * Departamento de Ciência da Computação – CIC
+ * Modelagem de Sistemas em Silício – Professor R. Jacobi
+ *
+ * Projeto: Simple System-C NoC.
+ *
+ * Nome: Jessé Barreto de Barros, Javier Urresty Sanches, João Carlos Passos
+ * Matrícula: 17/0067033
+ * Copyright 2017 - All rights reserved
+ ******************************************************************************************
+*/
+
 #ifndef NETWORKINTERFACEFRONTENDBASE_H
 #define NETWORKINTERFACEFRONTENDBASE_H
 
@@ -32,12 +46,14 @@ class NetworkInterfaceFrontEndBase : public INetworkInterfaceFrontEnd
     unsigned _payloadSrc;
 
     /*!
-     * \brief Synchronizing events and flags.
+     * \brief Synchronizing events.
      */
-    sc_event _ack, _valid;
-    bool _ackFlag, _validFlag;
-    sc_event _writing, _reading;
-    bool _writingFlag, _readingFlag;
+    sc_event _ack, _valid, _writing, _reading;
+
+    /*!
+     * \brief Synchronizing flags.
+     */
+    bool _ackFlag, _validFlag, _writingFlag, _readingFlag;
 
 protected:
     /*!
@@ -60,17 +76,25 @@ protected:
     void receivePayload(std::vector<uint32_t> &payload, int *src);
 public:
     /*!
-     * \brief This method shouldn't not be used by the shell.
+     * \brief This method is used by the kernel to receive a payload from the shell.
+     * This method should not be used by the shell.
      * Note: Please, do not use it by the shell.
      */
     void kernelReceivePayload(std::vector<uint32_t> &payload, int *dst) override;
 
     /*!
-     * \brief This method shouldn't not be used by the shell.
+     * \brief This method is used by the kernel to send a payload to the shell.
+     * This method should not be used by the shell.
      * Note: Please, do not use it by the shell.
      */
     void kernelSendPayload(const std::vector<uint32_t> &payload, int *src) override;
 
+    /*!
+     * \brief This method is used by the kernel to get whether the shell has a read request from it.
+     * This method should not be used by the shell.
+     * Note: Please, do not use it by the shell.
+     * \return A boolean flag which indicates whether the shell has a read request from the kernel.
+     */
     bool kernelGetFrontEndReadingStatus() override;
 };
 

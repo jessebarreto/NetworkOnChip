@@ -1,3 +1,17 @@
+/******************************************************************************************
+ * Universidade de Brasília – UnB
+ * Instituto de Ciências Exatas – IE
+ * Departamento de Ciência da Computação – CIC
+ * Modelagem de Sistemas em Silício – Professor R. Jacobi
+ *
+ * Projeto: Simple System-C NoC.
+ *
+ * Nome: Jessé Barreto de Barros, Javier Urresty Sanches, João Carlos Passos
+ * Matrícula: 17/0067033
+ * Copyright 2017 - All rights reserved
+ ******************************************************************************************
+*/
+
 #include "router.h"
 
 #include <cstdlib>
@@ -200,11 +214,6 @@ void Router::_eastChannelReadThread()
         // Checks whether the internal buffer is empty
         if (localBuffer->num_available() == 0) {
             _readFromChannel(&eastChannelIn, localBuffer, localBufferFlitsDstLink);
-
-            // When it finishes to read the package
-            for (;localBuffer->num_available();) {
-                wait(localBuffer->data_read_event());
-            }
         }
     }
 }

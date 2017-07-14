@@ -1,3 +1,17 @@
+/******************************************************************************************
+ * Universidade de Brasília – UnB
+ * Instituto de Ciências Exatas – IE
+ * Departamento de Ciência da Computação – CIC
+ * Modelagem de Sistemas em Silício – Professor R. Jacobi
+ *
+ * Projeto: Simple System-C NoC.
+ *
+ * Nome: Jessé Barreto de Barros, Javier Urresty Sanches, João Carlos Passos
+ * Matrícula: 17/0067033
+ * Copyright 2017 - All rights reserved
+ ******************************************************************************************
+*/
+
 #ifndef NETWORKINTERFACE_H
 #define NETWORKINTERFACE_H
 
@@ -35,6 +49,11 @@ class NetworkInterface : public sc_module
      */
     std::vector<Flit *> _receivePacket;
 
+    /*!
+     * \brief This mutex is responsible to make thread-safe both read/write threads.
+     *
+     * Note: This is way a NetworkInterface can not read/write at the same time.
+     */
     sc_mutex _keyThread;
 
     /*!

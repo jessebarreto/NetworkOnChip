@@ -1,3 +1,17 @@
+/******************************************************************************************
+ * Universidade de Brasília – UnB
+ * Instituto de Ciências Exatas – IE
+ * Departamento de Ciência da Computação – CIC
+ * Modelagem de Sistemas em Silício – Professor R. Jacobi
+ *
+ * Projeto: Simple System-C NoC.
+ *
+ * Nome: Jessé Barreto de Barros, Javier Urresty Sanches, João Carlos Passos
+ * Matrícula: 17/0067033
+ * Copyright 2017 - All rights reserved
+ ******************************************************************************************
+*/
+
 #ifndef NOCASSEMBLER_H
 #define NOCASSEMBLER_H
 
@@ -47,23 +61,30 @@ void connectStrayChannels(std::vector<Router *> &routers, std::vector<RouterChan
                           std::vector<ProcessorElementNull *> &processorElementsNull,
                           std::vector<ProcessorElementNullShell *> &processorElementNullShells);
 
-// Assemble NoC Topology
-//
-// Type A - Horizontal Connection
-//  Source Channel: East
-//  Destination Channel: West
-//
-// Type B - Vertical Connection
-//  Source Channel: South
-//  Destination Channel: North
-//
-//		  B
-//	      ||
-//	      ||
-//	A ===(Ri)
-//
-// New routers must be connected to their left-side and up-side routers
-// Should them exist and respecting the topology
+/*!
+ * \brief This method is used to assemble the NoC topology.
+ *
+ * Types of possible connection:
+ * Type A - Horizontal Connection
+ * Source Channel: East
+ * Destination Channel: West
+ *
+ * Type B - Vertical Connection
+ * Source Channel: South
+ * Destination Channel: North
+ *
+ *          B
+ *          ||
+ *          ||
+ *    A ===(Ri)
+ *
+ * New Routers must be connected to their left side and up side routers.
+ * The routers should exist in the routers vector and their identification should respect the NoC topology.
+ *
+ * \param routers A vector with the NoC routers.
+ * \param routerInputChannels A vector with the input channels. This vector will be populated to build the NoC.
+ * \param routerOutputChannels A vector with the output channels. This vector will be populated to build the NoC.
+ */
 void assembleNoC(const std::vector<Router *> &routers, std::vector<RouterChannel *> &routerInputChannels,
                  std::vector<RouterChannel *> &routerOutputChannels);
 

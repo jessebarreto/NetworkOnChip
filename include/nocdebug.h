@@ -1,3 +1,17 @@
+/******************************************************************************************
+ * Universidade de Brasília – UnB
+ * Instituto de Ciências Exatas – IE
+ * Departamento de Ciência da Computação – CIC
+ * Modelagem de Sistemas em Silício – Professor R. Jacobi
+ *
+ * Projeto: Simple System-C NoC.
+ *
+ * Nome: Jessé Barreto de Barros, Javier Urresty Sanches, João Carlos Passos
+ * Matrícula: 17/0067033
+ * Copyright 2017 - All rights reserved
+ ******************************************************************************************
+*/
+
 #ifndef NOCDEBUG_H
 #define NOCDEBUG_H
 
@@ -8,7 +22,7 @@
 #define NOC_COMMON_DEBUG (NoCDebug::Assembly | NoCDebug::Channel | NoCDebug::Router | NoCDebug::NI | NoCDebug::PE)
 
 /*!
- * Namespace with everything related to Debug.
+ * Namespace with everything related to Debug messages in the NoC.
  */
 namespace NoCDebug
 {

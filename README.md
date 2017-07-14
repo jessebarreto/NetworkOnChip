@@ -62,6 +62,21 @@ our NoC:
  * Pedro
  * Adalberto Gualeve (Group Supervisor)
 
+## Compilation Process
+
+This project was developed and tested in GNU-Linux OS using SystemC=2.3, C++11 and CMake>=2.8. To compile this project follow these steps:
+
+* Install Gnu Make: sudo apt-get install make 
+* Install CMake: sudo apt-get install cmake
+* Install SystemC from: http://accellera.org/images/downloads/standards/systemc/systemc-2.3.1a.tar.gz
+* Make sure there is a copy of SystemC library at /opt/systemc-2.3.1a
+	* Or feel free to change the CMakeLists.txt and change systemc path in your system.
+* Create a build folder: mkdir build && cd build
+* Run CMake to configure a make file in the build folder: cmake ..
+* Run Make to Compile the project: make
+* Run the test executable bin: ./NoC
+
+
 ## Bibliography
 
  * SUDEEP PASRICHA & NIKIL DUTT, On-Chip Communication Architectures - System On Chip Interconnect, Morgan-Kauffmann, 2008, Chap. 12

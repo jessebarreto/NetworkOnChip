@@ -90,6 +90,7 @@ add_executable( NoC #Executable Binary
                 )
 target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
 
+##Disable compilation of the channel tester
 ## Compile Executable
 #add_executable( NoCRouterChannelTester #Executable Binary
 #                test/routerchanneltester.cpp
@@ -102,6 +103,7 @@ target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
 #                )
 #target_link_libraries(NoCRouterChannelTester ${SYSTEMC_LIBRARIES})
 
+## Disable compilation of the networkInterface tester.
 ## Compile Executable
 #add_executable( NoCNetworkInterfaceTester #Executable Binary
 #                test/networkinterfacetester.cpp #Source List
@@ -114,6 +116,7 @@ target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
 #               )
 #target_link_libraries(NoCNetworkInterfaceTester ${SYSTEMC_LIBRARIES})
 
+## Disable the compilation of the basic shell communication tester.
 ## Compile Executable
 #add_executable( BasicShellCommunicationTest #Executable Binary
 #                test/basicshellscommunication.cpp
@@ -127,6 +130,7 @@ target_link_libraries(NoC ${SYSTEMC_LIBRARIES})
 #               )
 #target_link_libraries(BasicShellCommunicationTest ${SYSTEMC_LIBRARIES})
 
+## Disable the compilation of the router tester.
 ## Compile Executable
 #add_executable( RouterTest #Executable Binary
 #                test/routertester.cpp #Source List

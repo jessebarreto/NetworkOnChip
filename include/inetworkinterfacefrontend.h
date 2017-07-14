@@ -1,3 +1,17 @@
+/******************************************************************************************
+ * Universidade de Brasília – UnB
+ * Instituto de Ciências Exatas – IE
+ * Departamento de Ciência da Computação – CIC
+ * Modelagem de Sistemas em Silício – Professor R. Jacobi
+ *
+ * Projeto: Simple System-C NoC.
+ *
+ * Nome: Jessé Barreto de Barros, Javier Urresty Sanches, João Carlos Passos
+ * Matrícula: 17/0067033
+ * Copyright 2017 - All rights reserved
+ ******************************************************************************************
+*/
+
 #ifndef INETWORKINTERFACEFRONTEND_H
 #define INETWORKINTERFACEFRONTEND_H
 
@@ -37,6 +51,10 @@ public:
      */
     virtual void kernelSendPayload(const std::vector<uint32_t> &payload, int *src) = 0;
 
+    /*!
+     * \brief This method is used by the kernel to receive a reading request from the shell.
+     * \return A boolean flag which indicates if the shell has sent a read request from the kernel.
+     */
     virtual bool kernelGetFrontEndReadingStatus() = 0;
 };
 
